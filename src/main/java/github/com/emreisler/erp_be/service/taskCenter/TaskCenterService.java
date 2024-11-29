@@ -1,4 +1,4 @@
-package github.com.emreisler.erp_be.service;
+package github.com.emreisler.erp_be.service.taskCenter;
 
 import github.com.emreisler.erp_be.dto.TaskCenterDto;
 

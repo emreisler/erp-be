@@ -1,7 +1,7 @@
 package github.com.emreisler.erp_be.controllers;
 
 import github.com.emreisler.erp_be.dto.TaskCenterDto;
-import github.com.emreisler.erp_be.service.TaskCenterService;
+import github.com.emreisler.erp_be.service.taskCenter.TaskCenterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +27,6 @@ public class TaskCenterController {
     @GetMapping("/task-center/{tcNo}")
     public ResponseEntity<TaskCenterDto> GetTaskCenterByTcNo(@PathVariable int tcNo) throws Exception {
         return ResponseEntity.ok(this.taskCenterService.GetByNumber(tcNo));
-
     }
 
     @PostMapping("/task-center")
