@@ -8,6 +8,6 @@ import org.springframework.stereotype.Component;
 public class PartValidator implements Validator<TaskCenterDto> {
     @Override
     public void validate(TaskCenterDto object) throws ObjectNotValidException {
-        System.out.println("Part validator");
+
     }
 }

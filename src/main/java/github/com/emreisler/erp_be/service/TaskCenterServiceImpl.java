@@ -6,14 +6,13 @@ import github.com.emreisler.erp_be.exception.ExceptionMapper;
 import github.com.emreisler.erp_be.exception.TaskCenterNotFoundException;
 import github.com.emreisler.erp_be.repository.TaskCenterRepository;
 import github.com.emreisler.erp_be.validators.Validator;
+import jakarta.validation.executable.ValidateOnExecution;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
-@Validated
 public class TaskCenterServiceImpl implements TaskCenterService {
 
 

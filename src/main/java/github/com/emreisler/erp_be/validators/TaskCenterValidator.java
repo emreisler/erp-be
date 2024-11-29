@@ -9,7 +9,6 @@ public class TaskCenterValidator implements Validator<TaskCenterDto> {
 
     @Override
     public void validate(TaskCenterDto object) throws ObjectNotValidException {
-        System.out.println("TaskCenter validator");
         if (object == null) {
             throw new ObjectNotValidException("TaskCenter object is null");
         }
@@ -18,6 +17,9 @@ public class TaskCenterValidator implements Validator<TaskCenterDto> {
         }
         if (object.getNumber() <= 0 || object.getNumber() > 1000) {
             throw new ObjectNotValidException(String.format("TaskCenter number:%d is out of range 0 to 1000", object.getNumber()));
+        }
+        if (object.getName().length() < 3 || object.getName().length() > 100){
+            throw new ObjectNotValidException("TaskCenter name length is invalid");
         }
     }
 }

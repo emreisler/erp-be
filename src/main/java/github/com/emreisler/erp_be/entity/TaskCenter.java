@@ -4,20 +4,25 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Max;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
-public class TaskCenterDto {
+public class TaskCenter {
 
-    public TaskCenterDto(UUID uuid, int number, String name, Boolean isInspection) {
+    public TaskCenter(UUID uuid, int number, String name, Boolean isInspection) {
         this.uuid = uuid;
         this.number = number;
         this.name = name;
         this.isInspection = isInspection;
     }
 
-    public TaskCenterDto() {}
+    public TaskCenter() {
+    }
 
     @Id
     private @GeneratedValue Long id;
@@ -35,8 +40,11 @@ public class TaskCenterDto {
     private boolean isInspection;
 
 
+    @CreatedDate
+    Date createdAt;
 
-
+    @LastModifiedDate
+    Date modifiedAt;
 
 
     public void setId(Long id) {
