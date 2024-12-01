@@ -26,24 +26,24 @@ public class Stock {
     private Long id;
 
     @Column(unique = true)
-    public UUID uuid;
+    private UUID uuid;
 
     @NotNull
     @Column(unique = true)
-    public String name;
+    private String name;
 
     @NotNull
-    public float quantity;
+    private float quantity;
 
     @NotNull
-    public float unitPrice;
+    private float unitPrice;
 
     @NotNull
-    public Unit unit;
+    private Unit unit;
 
     @NotNull
     @Column(unique = true)
-    public String code;
+    private String code;
 
     public UUID getUuid() {
         return uuid;

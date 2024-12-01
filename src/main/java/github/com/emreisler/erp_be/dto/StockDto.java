@@ -15,12 +15,12 @@ public class StockDto {
         this.code = code;
     }
 
-    public UUID uuid;
-    public String name;
-    public float quantity;
-    public float unitPrice;
-    public Unit unit;
-    public String code;
+    private UUID uuid;
+    private String name;
+    private float quantity;
+    private float unitPrice;
+    private Unit unit;
+    private String code;
 
     public String getCode() {
         return code;

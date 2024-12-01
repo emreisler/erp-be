@@ -16,10 +16,9 @@ public class StockValidator implements Validator<StockDto> {
         if (object.getName() == null || object.getName().isEmpty()) {
             throw new ObjectNotValidException("name is empty");
         }
-        if (object.getQuantity() == 0) {
-            throw new ObjectNotValidException("quantity is 0");
+        if (object.getQuantity() <= 0) {
+            throw new ObjectNotValidException("quantity can nat be zero or less");
         }
-        //check has unit
         if (object.getUnit() == null) {
             throw new ObjectNotValidException("unit is null");
         }

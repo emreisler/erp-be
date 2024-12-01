@@ -13,12 +13,12 @@ public class StockConverter {
             return null;
         }
         return new StockDto(
-                stock.uuid,
-                stock.name,
-                stock.quantity,
-                stock.unitPrice,
-                stock.unit,
-                stock.code
+                stock.getUuid(),
+                stock.getName(),
+                stock.getQuantity(),
+                stock.getUnitPrice(),
+                stock.getUnit(),
+                stock.getCode()
         );
     }
 
@@ -27,12 +27,12 @@ public class StockConverter {
             return null;
         }
         return new Stock(
-                stockDto.uuid,
-                stockDto.name,
-                stockDto.quantity,
-                stockDto.unitPrice,
-                stockDto.unit,
-                stockDto.code
+                stockDto.getUuid(),
+                stockDto.getName(),
+                stockDto.getQuantity(),
+                stockDto.getUnitPrice(),
+                stockDto.getUnit(),
+                stockDto.getCode()
         );
     }
 
