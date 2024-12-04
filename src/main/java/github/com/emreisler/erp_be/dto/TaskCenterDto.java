@@ -47,11 +47,11 @@ public class TaskCenterDto {
         this.name = name;
     }
 
-    public Boolean getInspection() {
+    public Boolean getIsInspection() {
         return isInspection;
     }
 
-    public void setInspection(Boolean inspection) {
+    public void setIsInspection(Boolean inspection) {
         isInspection = inspection;
     }
 }

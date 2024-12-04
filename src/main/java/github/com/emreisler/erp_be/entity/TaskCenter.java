@@ -1,7 +1,6 @@
 package github.com.emreisler.erp_be.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -70,11 +69,11 @@ public class TaskCenter {
         this.name = name;
     }
 
-    public Boolean getInspection() {
+    public Boolean getIsInspection() {
         return isInspection;
     }
 
-    public void setInspection(Boolean inspection) {
+    public void setIsInspection(Boolean inspection) {
         isInspection = inspection;
     }
 

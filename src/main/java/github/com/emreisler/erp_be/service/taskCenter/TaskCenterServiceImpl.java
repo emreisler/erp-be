@@ -7,6 +7,7 @@ import github.com.emreisler.erp_be.exception.TaskCenterNotFoundException;
 import github.com.emreisler.erp_be.repository.TaskCenterRepository;
 import github.com.emreisler.erp_be.validators.Validator;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -57,13 +58,14 @@ public class TaskCenterServiceImpl implements TaskCenterService {
         var updatedTaskCenter = taskCenterRepository.findByNumber(tcNumber).map(tc -> {
             tc.setNumber(taskCenter.getNumber());
             tc.setName(taskCenter.getName());
-            tc.setInspection(taskCenter.getInspection());
+            tc.setIsInspection(taskCenter.getIsInspection());
             return taskCenterRepository.save(tc);
         }).orElseThrow(TaskCenterNotFoundException::new);
         return TaskCenterConverter.toDto(updatedTaskCenter);
     }
 
     @Override
+    @Transactional
     public void Delete(int tcNumber) throws Exception {
         if (!taskCenterRepository.existsByNumber(tcNumber)) {
             throw new TaskCenterNotFoundException();

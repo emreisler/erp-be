@@ -17,7 +17,7 @@ public interface PartService {
 
     PartDto Create(PartDto partDto) throws Exception;
 
-    PartDto AttachOperation(String partNumber, List<OperationDto> operations) throws Exception;
+    PartDto AttachOperation(String partNumber, OperationDto operation) throws Exception;
 
     void Delete(String partNumber) throws Exception;
 }

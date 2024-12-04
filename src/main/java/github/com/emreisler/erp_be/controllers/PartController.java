@@ -45,8 +45,8 @@ public class PartController {
     }
 
     @PutMapping("/operation/{partNumber}")
-    public ResponseEntity<PartDto> AttachOperation(@PathVariable String partNumber, @RequestBody List<OperationDto> operations) throws Exception {
-        return ResponseEntity.status(HttpStatus.CREATED).body(partService.AttachOperation(partNumber, operations));
+    public ResponseEntity<PartDto> AttachOperation(@PathVariable String partNumber, @RequestBody OperationDto operation) throws Exception {
+        return ResponseEntity.status(HttpStatus.CREATED).body(partService.AttachOperation(partNumber, operation));
     }
 
     @DeleteMapping("/{partNumber}")

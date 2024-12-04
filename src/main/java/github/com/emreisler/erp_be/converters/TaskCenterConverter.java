@@ -9,11 +9,11 @@ import java.util.List;
 public class TaskCenterConverter {
 
     public static TaskCenterDto toDto(TaskCenter taskCenter) {
-        return new TaskCenterDto(taskCenter.getUuid(), taskCenter.getNumber(), taskCenter.getName(), taskCenter.getInspection());
+        return new TaskCenterDto(taskCenter.getUuid(), taskCenter.getNumber(), taskCenter.getName(), taskCenter.getIsInspection());
     }
 
     public static TaskCenter toEntity(TaskCenterDto taskCenterDto) {
-        return new TaskCenter(taskCenterDto.getUuid(), taskCenterDto.getNumber(), taskCenterDto.getName(), taskCenterDto.getInspection());
+        return new TaskCenter(taskCenterDto.getUuid(), taskCenterDto.getNumber(), taskCenterDto.getName(), taskCenterDto.getIsInspection());
     }
 
     public static List<TaskCenterDto> toDto(List<TaskCenter> taskCenter) {
