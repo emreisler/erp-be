@@ -1,5 +1,7 @@
 package github.com.emreisler.erp_be.dto;
 
+import github.com.emreisler.erp_be.enums.CategoryType;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -9,14 +11,16 @@ public class PartDto {
     private String number;
     private String name;
     private String projectCode;
+    private CategoryType category;
     private List<StockDto> stocksList;
     private List<OperationDto> operationList;
 
-    public PartDto(UUID uuid, String number, String name, String projectCode, List<StockDto> stocksList, List<OperationDto> operationList) {
+    public PartDto(UUID uuid, String number, String name, String projectCode, CategoryType category, List<StockDto> stocksList, List<OperationDto> operationList) {
         this.uuid = uuid;
         this.number = number;
         this.name = name;
         this.projectCode = projectCode;
+        this.category = category;
         this.stocksList = stocksList;
         this.operationList = operationList;
     }
@@ -70,5 +74,13 @@ public class PartDto {
 
     public void setProjectCode(String projectCode) {
         this.projectCode = projectCode;
+    }
+
+    public CategoryType getCategory() {
+        return category;
+    }
+
+    public void setCategory(CategoryType category) {
+        this.category = category;
     }
 }

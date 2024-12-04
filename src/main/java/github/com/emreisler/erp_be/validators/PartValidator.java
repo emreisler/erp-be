@@ -48,6 +48,11 @@ public class PartValidator implements Validator<PartDto> {
             throw new ObjectNotValidException("Project code contains invalid characters. Only letters, numbers, and '-' are allowed");
         }
 
+        //Validate part has a category
+        if (object.getCategory() == null) {
+            throw new ObjectNotValidException("Category cannot be null");
+        }
+
         // Validate Operation List
         if (object.getOperationList() != null && !object.getOperationList().isEmpty()) {
             throw new ObjectNotValidException("Operation list must be empty");

@@ -1,6 +1,8 @@
 package github.com.emreisler.erp_be.entity;
 
+import github.com.emreisler.erp_be.enums.CategoryType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,7 +25,11 @@ public class Part {
 
     private String projectCode;
 
-    @ManyToMany
+    @NotNull
+    @Enumerated(EnumType.ORDINAL)
+    private CategoryType category;
+
+    @ManyToMany(cascade = CascadeType.PERSIST)
     private List<Stock> stocksList;
 
     @OneToMany(mappedBy = "part", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -83,5 +89,13 @@ public class Part {
 
     public void setProjectCode(String projectCode) {
         this.projectCode = projectCode;
+    }
+
+    public CategoryType getCategory() {
+        return category;
+    }
+
+    public void setCategory(CategoryType category) {
+        this.category = category;
     }
 }

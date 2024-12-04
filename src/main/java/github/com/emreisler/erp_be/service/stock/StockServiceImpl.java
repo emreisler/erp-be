@@ -1,14 +1,13 @@
 package github.com.emreisler.erp_be.service.stock;
 
 import github.com.emreisler.erp_be.converters.StockConverter;
-import github.com.emreisler.erp_be.converters.TaskCenterConverter;
 import github.com.emreisler.erp_be.dto.StockDto;
 import github.com.emreisler.erp_be.exception.ErpRuntimeException;
 import github.com.emreisler.erp_be.exception.StockNotFoundException;
-import github.com.emreisler.erp_be.exception.TaskCenterNotFoundException;
 import github.com.emreisler.erp_be.repository.StockRepository;
 import github.com.emreisler.erp_be.validators.Validator;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -70,12 +69,14 @@ public class StockServiceImpl implements StockService {
             stock.setUnitPrice(stockDto.getUnitPrice());
             stock.setUuid(stockDto.getUuid());
             return stockRepository.save(stock);
-        }).orElseThrow(TaskCenterNotFoundException::new);
+        }).orElseThrow(StockNotFoundException::new);
         return StockConverter.toDto(updatedStock);
     }
 
     @Override
+    @Transactional
     public void Delete(String code) throws ErpRuntimeException {
-
+        stockRepository.findByCode(code).orElseThrow(StockNotFoundException::new);
+        stockRepository.deleteByCode(code);
     }
 }

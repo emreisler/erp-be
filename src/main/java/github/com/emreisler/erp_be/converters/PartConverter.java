@@ -18,6 +18,7 @@ public class PartConverter {
                 part.getNumber(),
                 part.getName(),
                 part.getProjectCode(),
+                part.getCategory(),
                 StockConverter.toDto(part.getStocksList()),
                 OperationConverter.toDto(part.getOperationList()) // Assuming there's an OperationConverter
         );
@@ -33,6 +34,7 @@ public class PartConverter {
         part.setNumber(partDto.getNumber());
         part.setName(partDto.getName());
         part.setProjectCode(partDto.getProjectCode()); // Assuming there's a ProjectConverter
+        part.setCategory(partDto.getCategory());
         part.setStocksList(StockConverter.toEntity(partDto.getStocksList()));
         part.setOperationList(OperationConverter.toEntity(partDto.getOperationList())); // Assuming there's an OperationConverter
         return part;

@@ -19,27 +19,32 @@ public class ProjectController {
     }
 
     @GetMapping
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<List<ProjectDto>> getAllProjects() {
         return ResponseEntity.ok(projectService.getAll());
     }
 
     @GetMapping("/{code}")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<ProjectDto> getProjectByCode(@PathVariable String code) {
         return ResponseEntity.ok(projectService.getByCode(code));
     }
 
     @PostMapping
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<ProjectDto> createProject(@RequestBody ProjectDto projectDto) {
         ProjectDto createdProject = projectService.create(projectDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
 
     @PutMapping("/{code}")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<ProjectDto> updateProject(@PathVariable String code, @RequestBody ProjectDto projectDto) {
         return ResponseEntity.ok(projectService.update(code, projectDto));
     }
 
     @DeleteMapping("/{code}")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<String> deleteProject(@PathVariable String code) {
         projectService.deleteByCode(code);
         return ResponseEntity.ok("Project deleted successfully");
