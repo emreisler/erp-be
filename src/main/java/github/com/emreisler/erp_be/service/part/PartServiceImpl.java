@@ -88,7 +88,7 @@ public class PartServiceImpl implements PartService {
         Set<Integer> stepNumbers = new HashSet<>();
 
         for (Operation partOperation : part.getOperationList()) {
-            if (stepNumbers.contains(operation.getSepNumber())) {
+            if (stepNumbers.contains(partOperation.getSepNumber())) {
                 throw new DuplicateOperationStepException(String.format("Part operation already has step number %d", operation.getSepNumber()));
             }
             stepNumbers.add(operation.getSepNumber());
