@@ -3,7 +3,7 @@ package github.com.emreisler.erp_be.service.stock;
 import github.com.emreisler.erp_be.converters.StockConverter;
 import github.com.emreisler.erp_be.dto.StockDto;
 import github.com.emreisler.erp_be.exception.ErpRuntimeException;
-import github.com.emreisler.erp_be.exception.StockNotFoundException;
+import github.com.emreisler.erp_be.exception.NotFoundException;
 import github.com.emreisler.erp_be.repository.StockRepository;
 import github.com.emreisler.erp_be.validators.Validator;
 import org.springframework.stereotype.Service;
@@ -37,14 +37,14 @@ public class StockServiceImpl implements StockService {
     public StockDto GetByCode(String code) throws ErpRuntimeException {
         return stockRepository.findByCode(code).
                 map(StockConverter::toDto).
-                orElseThrow(StockNotFoundException::new);
+                orElseThrow(() -> new NotFoundException("Stock not found"));
     }
 
     @Override
     public StockDto GetByName(String name) throws ErpRuntimeException {
         return stockRepository.findByName(name).
                 map(StockConverter::toDto).
-                orElseThrow(StockNotFoundException::new);
+                orElseThrow(() -> new NotFoundException("Stock not found"));
     }
 
     @Override
@@ -69,14 +69,14 @@ public class StockServiceImpl implements StockService {
             stock.setUnitPrice(stockDto.getUnitPrice());
             stock.setUuid(stockDto.getUuid());
             return stockRepository.save(stock);
-        }).orElseThrow(StockNotFoundException::new);
+        }).orElseThrow(() -> new NotFoundException("Stock not found"));
         return StockConverter.toDto(updatedStock);
     }
 
     @Override
     @Transactional
     public void Delete(String code) throws ErpRuntimeException {
-        stockRepository.findByCode(code).orElseThrow(StockNotFoundException::new);
+        stockRepository.findByCode(code).orElseThrow(() -> new NotFoundException("Stock not found"));
         stockRepository.deleteByCode(code);
     }
 }

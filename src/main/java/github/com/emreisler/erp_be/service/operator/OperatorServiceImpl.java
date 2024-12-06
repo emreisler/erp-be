@@ -48,7 +48,7 @@ public class OperatorServiceImpl implements OperatorService {
 
         var operations = part.getOperationList().stream().sorted(Comparator.comparingInt(OperationDto::getSepNumber)).toList();
 
-        var stepFound = false;
+        var stepFound = false; // todo fix the buggy logic
         for (OperationDto op : operations) {
             if (stepFound) {
                 prodOrder.setCurrentStep(op.getSepNumber());

@@ -5,10 +5,9 @@ import github.com.emreisler.erp_be.converters.PartConverter;
 import github.com.emreisler.erp_be.dto.OperationDto;
 import github.com.emreisler.erp_be.dto.PartDto;
 import github.com.emreisler.erp_be.entity.Operation;
-import github.com.emreisler.erp_be.exception.DuplicateOperationStepException;
-import github.com.emreisler.erp_be.exception.PartConflictException;
-import github.com.emreisler.erp_be.exception.PartNotFoundException;
-import github.com.emreisler.erp_be.exception.StepNumberNotPositiveException;
+import github.com.emreisler.erp_be.exception.BadRequestException;
+import github.com.emreisler.erp_be.exception.ConflictException;
+import github.com.emreisler.erp_be.exception.NotFoundException;
 import github.com.emreisler.erp_be.repository.PartRepository;
 import github.com.emreisler.erp_be.validators.Validator;
 import org.springframework.stereotype.Service;
@@ -55,14 +54,14 @@ public class PartServiceImpl implements PartService {
         System.out.println(part);
         return partRepository.findByNumber(number)
                 .map(PartConverter::toDto)
-                .orElseThrow(PartNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(String.format("Part with number %s not found", number)));
     }
 
     @Override
     public PartDto GetByName(String name) throws Exception {
         return partRepository.findByName(name)
                 .map(PartConverter::toDto)
-                .orElseThrow(PartNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(String.format("Part with number %s not found", name)));
     }
 
     @Override
@@ -70,7 +69,7 @@ public class PartServiceImpl implements PartService {
         partValidator.validate(partDto);
 
         partRepository.findByNumber(partDto.getNumber()).ifPresent(part -> {
-            throw new PartConflictException();
+            throw new ConflictException(String.format("Part with number %s already exists", part.getNumber()));
         });
 
         partDto.setUuid(UUID.randomUUID());
@@ -80,16 +79,16 @@ public class PartServiceImpl implements PartService {
     @Override
     public PartDto AttachOperation(String partNumber, OperationDto operation) throws Exception {
         if (operation.getSepNumber() <= 0) {
-            throw new StepNumberNotPositiveException();
+            throw new BadRequestException(String.format("Part operation number must be greater than zero", operation.getSepNumber()));
         }
 
-        var part = partRepository.findByNumber(partNumber).orElseThrow(PartNotFoundException::new);
+        var part = partRepository.findByNumber(partNumber).orElseThrow(() -> new NotFoundException(String.format("Part with number %s not found", partNumber)));
 
         Set<Integer> stepNumbers = new HashSet<>();
 
         for (Operation partOperation : part.getOperationList()) {
             if (stepNumbers.contains(partOperation.getSepNumber())) {
-                throw new DuplicateOperationStepException(String.format("Part operation already has step number %d", operation.getSepNumber()));
+                throw new ConflictException(String.format("Part operation number %s already exists", part.getNumber()));
             }
             stepNumbers.add(operation.getSepNumber());
         }

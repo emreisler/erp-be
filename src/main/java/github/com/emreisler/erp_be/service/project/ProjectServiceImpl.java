@@ -3,7 +3,7 @@ package github.com.emreisler.erp_be.service.project;
 import github.com.emreisler.erp_be.converters.ProjectConverter;
 import github.com.emreisler.erp_be.dto.ProjectDto;
 import github.com.emreisler.erp_be.entity.Project;
-import github.com.emreisler.erp_be.exception.ProjectNotFoundException;
+import github.com.emreisler.erp_be.exception.NotFoundException;
 import github.com.emreisler.erp_be.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +30,7 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectDto getByCode(String code) {
         return projectRepository.findByCode(code)
                 .map(ProjectConverter::toDto)
-                .orElseThrow(ProjectNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Project not found"));
     }
 
     public ProjectDto create(ProjectDto projectDto) {
@@ -45,7 +45,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     public ProjectDto update(String code, ProjectDto projectDto) {
         Project project = projectRepository.findByCode(code)
-                .orElseThrow(ProjectNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Project not found"));
 
         project.setCode(projectDto.getCode());
         project.setName(projectDto.getName());
@@ -58,7 +58,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public void deleteByCode(String code) {
         if (!projectRepository.existsByCode(code)) {
-            throw new ProjectNotFoundException();
+            throw new NotFoundException("Project not found");
         }
         projectRepository.deleteByCode(code);
     }

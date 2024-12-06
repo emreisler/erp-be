@@ -7,7 +7,8 @@ import github.com.emreisler.erp_be.entity.Operation;
 import github.com.emreisler.erp_be.entity.Part;
 import github.com.emreisler.erp_be.entity.ProductionOrder;
 import github.com.emreisler.erp_be.enums.ProductionOrderStatus;
-import github.com.emreisler.erp_be.exception.ProductionOrderNotFoundException;
+import github.com.emreisler.erp_be.exception.ErpRuntimeException;
+import github.com.emreisler.erp_be.exception.NotFoundException;
 import github.com.emreisler.erp_be.repository.PartRepository;
 import github.com.emreisler.erp_be.repository.ProductionOrderRepository;
 import github.com.emreisler.erp_be.service.stamp.StampService;
@@ -47,13 +48,13 @@ public class ProductionOrderServiceImpl implements ProductionOrderService {
     }
 
     @Override
-    public ProductionOrderDto getByCode(String code) throws ProductionOrderNotFoundException {
-        var po = productionOrderRepository.findByCode(code).orElseThrow(ProductionOrderNotFoundException::new);
+    public ProductionOrderDto getByCode(String code) throws ErpRuntimeException {
+        var po = productionOrderRepository.findByCode(code).orElseThrow(() -> new NotFoundException("ProductionOrder not found for code: " + code));
         return ProductionOrderConverter.toDto(po);
     }
 
     @Override
-    public ProductionOrderDto update(ProductionOrderDto productionOrderDto) throws ProductionOrderNotFoundException {
+    public ProductionOrderDto update(ProductionOrderDto productionOrderDto) throws ErpRuntimeException {
         var updatedPo = productionOrderRepository.findByCode(productionOrderDto.getCode()).map(po -> {
             po.setQuantity(productionOrderDto.getQuantity());
             po.setTotalSteps(productionOrderDto.getTotalSteps());
@@ -61,7 +62,7 @@ public class ProductionOrderServiceImpl implements ProductionOrderService {
             po.setPartNumber(productionOrderDto.getPartNumber());
             po.setStatus(productionOrderDto.getStatus());
             return productionOrderRepository.save(po);
-        }).orElseThrow(ProductionOrderNotFoundException::new);
+        }).orElseThrow(() -> new NotFoundException("ProductionOrder not found for code: " + productionOrderDto.getCode()));
         return ProductionOrderConverter.toDto(updatedPo);
     }
 

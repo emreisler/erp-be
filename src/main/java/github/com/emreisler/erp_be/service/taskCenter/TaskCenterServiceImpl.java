@@ -2,8 +2,7 @@ package github.com.emreisler.erp_be.service.taskCenter;
 
 import github.com.emreisler.erp_be.converters.TaskCenterConverter;
 import github.com.emreisler.erp_be.dto.TaskCenterDto;
-import github.com.emreisler.erp_be.exception.ExceptionMapper;
-import github.com.emreisler.erp_be.exception.TaskCenterNotFoundException;
+import github.com.emreisler.erp_be.exception.NotFoundException;
 import github.com.emreisler.erp_be.repository.TaskCenterRepository;
 import github.com.emreisler.erp_be.validators.Validator;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,7 @@ public class TaskCenterServiceImpl implements TaskCenterService {
 
     @Override
     public TaskCenterDto GetByNumber(int tcNumber) throws Exception {
-        var taskCenter = taskCenterRepository.findByNumber(tcNumber).orElseThrow(TaskCenterNotFoundException::new);
+        var taskCenter = taskCenterRepository.findByNumber(tcNumber).orElseThrow(() -> new NotFoundException("Task center with number " + tcNumber + " not found"));
         return TaskCenterConverter.toDto(taskCenter);
     }
 
@@ -43,11 +42,8 @@ public class TaskCenterServiceImpl implements TaskCenterService {
 
         var taskCenterEntity = TaskCenterConverter.toEntity(taskCenter);
         taskCenterEntity.setUuid(UUID.randomUUID());
-        try {
-            return TaskCenterConverter.toDto(taskCenterRepository.save(taskCenterEntity));
-        } catch (Exception e) {
-            throw ExceptionMapper.mapHibernateException(e);
-        }
+
+        return TaskCenterConverter.toDto(taskCenterRepository.save(taskCenterEntity));
     }
 
     @Override
@@ -60,7 +56,7 @@ public class TaskCenterServiceImpl implements TaskCenterService {
             tc.setName(taskCenter.getName());
             tc.setIsInspection(taskCenter.getIsInspection());
             return taskCenterRepository.save(tc);
-        }).orElseThrow(TaskCenterNotFoundException::new);
+        }).orElseThrow(() -> new NotFoundException("Task center with number " + tcNumber + " not found"));
         return TaskCenterConverter.toDto(updatedTaskCenter);
     }
 
@@ -68,7 +64,7 @@ public class TaskCenterServiceImpl implements TaskCenterService {
     @Transactional
     public void Delete(int tcNumber) throws Exception {
         if (!taskCenterRepository.existsByNumber(tcNumber)) {
-            throw new TaskCenterNotFoundException();
+            throw new NotFoundException("Task center with number " + tcNumber + " not found");
         }
         taskCenterRepository.deleteByNumber(tcNumber);
     }
