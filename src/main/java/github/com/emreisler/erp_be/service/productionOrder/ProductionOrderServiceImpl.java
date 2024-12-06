@@ -3,14 +3,18 @@ package github.com.emreisler.erp_be.service.productionOrder;
 import github.com.emreisler.erp_be.converters.ProductionOrderConverter;
 import github.com.emreisler.erp_be.dto.CreateProductionOrderRequest;
 import github.com.emreisler.erp_be.dto.ProductionOrderDto;
+import github.com.emreisler.erp_be.entity.Operation;
 import github.com.emreisler.erp_be.entity.Part;
 import github.com.emreisler.erp_be.entity.ProductionOrder;
 import github.com.emreisler.erp_be.enums.ProductionOrderStatus;
+import github.com.emreisler.erp_be.exception.ProductionOrderNotFoundException;
 import github.com.emreisler.erp_be.repository.PartRepository;
 import github.com.emreisler.erp_be.repository.ProductionOrderRepository;
+import github.com.emreisler.erp_be.service.stamp.StampService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,11 +23,13 @@ public class ProductionOrderServiceImpl implements ProductionOrderService {
 
     private final ProductionOrderRepository productionOrderRepository;
     private final PartRepository partRepository;
+    private final StampService stampService;
 
 
-    public ProductionOrderServiceImpl(ProductionOrderRepository productionOrderRepository, PartRepository partRepository) {
+    public ProductionOrderServiceImpl(ProductionOrderRepository productionOrderRepository, PartRepository partRepository, StampService stampService) {
         this.productionOrderRepository = productionOrderRepository;
         this.partRepository = partRepository;
+        this.stampService = stampService;
     }
 
     public List<ProductionOrderDto> getAll() {
@@ -38,6 +44,25 @@ public class ProductionOrderServiceImpl implements ProductionOrderService {
         return productionOrders.stream()
                 .map(ProductionOrderConverter::toDto)
                 .toList();
+    }
+
+    @Override
+    public ProductionOrderDto getByCode(String code) throws ProductionOrderNotFoundException {
+        var po = productionOrderRepository.findByCode(code).orElseThrow(ProductionOrderNotFoundException::new);
+        return ProductionOrderConverter.toDto(po);
+    }
+
+    @Override
+    public ProductionOrderDto update(ProductionOrderDto productionOrderDto) throws ProductionOrderNotFoundException {
+        var updatedPo = productionOrderRepository.findByCode(productionOrderDto.getCode()).map(po -> {
+            po.setQuantity(productionOrderDto.getQuantity());
+            po.setTotalSteps(productionOrderDto.getTotalSteps());
+            po.setEndDate(productionOrderDto.getEndDate());
+            po.setPartNumber(productionOrderDto.getPartNumber());
+            po.setStatus(productionOrderDto.getStatus());
+            return productionOrderRepository.save(po);
+        }).orElseThrow(ProductionOrderNotFoundException::new);
+        return ProductionOrderConverter.toDto(updatedPo);
     }
 
     public List<ProductionOrderDto> getByCurrentTaskCenterNo(int currentTaskCenter) {
@@ -61,12 +86,13 @@ public class ProductionOrderServiceImpl implements ProductionOrderService {
         if (part.getOperationList().isEmpty()) {
             throw new IllegalArgumentException("No operations found for partNo: " + request.getPartNo());
         }
-        int currentStep = part.getOperationList() != null && !part.getOperationList().isEmpty()
-                ? part.getOperationList().get(0).getSepNumber()
-                : 0; // Default to 0 if no operations are present
-        int currentTaskCenter = part.getOperationList() != null && !part.getOperationList().isEmpty()
-                ? part.getOperationList().get(0).getTaskCenterNo()
-                : 0;
+
+        var sortedOperations = part.getOperationList().stream().sorted(Comparator.comparingInt(Operation::getSepNumber)).toList();
+        var firstOperation = sortedOperations.get(0);
+
+        int currentStep = firstOperation.getSepNumber();
+        int currentTaskCenter = firstOperation.getTaskCenterNo();
+
         // Create and populate ProductionOrder entity
         ProductionOrder productionOrder = new ProductionOrder();
         productionOrder.setOrderId(orderId);
@@ -75,17 +101,15 @@ public class ProductionOrderServiceImpl implements ProductionOrderService {
         productionOrder.setQuantity(request.getQuantity());
         productionOrder.setStatus(ProductionOrderStatus.CREATED);
         productionOrder.setCurrentStep(currentStep);
-        productionOrder.setTotalSteps(part.getOperationList().size()); // Total steps from operations list
-        productionOrder.setCurrentTaskCenter(currentTaskCenter); // Default task center
-        productionOrder.setEndDate(request.getEndDate()); // Set end date from the request
+        productionOrder.setTotalSteps(part.getOperationList().size());
+        productionOrder.setCurrentTaskCenter(currentTaskCenter);
+        productionOrder.setEndDate(request.getEndDate());
 
-        // Save the entity and convert to DTO
         try {
             ProductionOrder savedOrder = productionOrderRepository.save(productionOrder);
             return ProductionOrderConverter.toDto(savedOrder);
         } catch (Exception e) {
             throw new IllegalArgumentException("Error while saving production order");
         }
-
     }
 }

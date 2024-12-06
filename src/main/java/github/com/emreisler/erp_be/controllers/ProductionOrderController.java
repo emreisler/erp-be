@@ -2,6 +2,8 @@ package github.com.emreisler.erp_be.controllers;
 
 import github.com.emreisler.erp_be.dto.CreateProductionOrderRequest;
 import github.com.emreisler.erp_be.dto.ProductionOrderDto;
+import github.com.emreisler.erp_be.dto.StampDto;
+import github.com.emreisler.erp_be.service.operator.OperatorService;
 import github.com.emreisler.erp_be.service.productionOrder.ProductionOrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +15,11 @@ import java.util.List;
 public class ProductionOrderController {
 
     private final ProductionOrderService productionOrderService;
+    private final OperatorService operatorService;
 
-    public ProductionOrderController(ProductionOrderService productionOrderService) {
+    public ProductionOrderController(ProductionOrderService productionOrderService, OperatorService operatorService) {
         this.productionOrderService = productionOrderService;
+        this.operatorService = operatorService;
     }
 
     @GetMapping
@@ -36,5 +40,10 @@ public class ProductionOrderController {
     @PostMapping
     public ResponseEntity<ProductionOrderDto> create(@RequestBody CreateProductionOrderRequest request) {
         return ResponseEntity.ok(productionOrderService.create(request));
+    }
+
+    @PutMapping("/stamp")
+    public ResponseEntity<ProductionOrderDto> stamp(@RequestBody StampDto stampDto) throws Exception {
+        return ResponseEntity.ok(operatorService.stamp(stampDto));
     }
 }
