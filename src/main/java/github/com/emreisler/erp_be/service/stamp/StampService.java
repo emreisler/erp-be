@@ -8,4 +8,5 @@ import java.util.List;
 public interface StampService {
     StampDto stamp(StampDto stampDto) throws ErpRuntimeException;
     List<StampDto> getByPoCode(String code) throws ErpRuntimeException;
+    boolean isStamped(String poCode, int stepNumber) throws ErpRuntimeException;
 }

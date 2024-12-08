@@ -11,7 +11,7 @@ import github.com.emreisler.erp_be.exception.ErpRuntimeException;
 import github.com.emreisler.erp_be.exception.NotFoundException;
 import github.com.emreisler.erp_be.repository.PartRepository;
 import github.com.emreisler.erp_be.repository.ProductionOrderRepository;
-import github.com.emreisler.erp_be.service.stamp.StampService;
+import github.com.emreisler.erp_be.validators.Validator;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -24,13 +24,13 @@ public class ProductionOrderServiceImpl implements ProductionOrderService {
 
     private final ProductionOrderRepository productionOrderRepository;
     private final PartRepository partRepository;
-    private final StampService stampService;
+    private final Validator<CreateProductionOrderRequest> validator;
 
 
-    public ProductionOrderServiceImpl(ProductionOrderRepository productionOrderRepository, PartRepository partRepository, StampService stampService) {
+    public ProductionOrderServiceImpl(ProductionOrderRepository productionOrderRepository, PartRepository partRepository, Validator<CreateProductionOrderRequest> validator) {
         this.productionOrderRepository = productionOrderRepository;
         this.partRepository = partRepository;
-        this.stampService = stampService;
+        this.validator = validator;
     }
 
     public List<ProductionOrderDto> getAll() {
@@ -75,17 +75,20 @@ public class ProductionOrderServiceImpl implements ProductionOrderService {
 
     @Transactional
     public ProductionOrderDto create(CreateProductionOrderRequest request) {
+
+        validator.validate(request);
+
         // Generate UUID and Code
         UUID orderId = UUID.randomUUID();
         String code = "PO-" + orderId.toString().substring(0, 8).toUpperCase();
 
         // Fetch part details and determine the current step
         Part part = partRepository.findByNumber(request.getPartNo())
-                .orElseThrow(() -> new IllegalArgumentException("Part not found for partNo: " + request.getPartNo()));
+                .orElseThrow(() -> new NotFoundException("Part not found for partNo: " + request.getPartNo()));
 
         //if part has no operations production order can not be created
         if (part.getOperationList().isEmpty()) {
-            throw new IllegalArgumentException("No operations found for partNo: " + request.getPartNo());
+            throw new NotFoundException("No operations found for partNo: " + request.getPartNo());
         }
 
         var sortedOperations = part.getOperationList().stream().sorted(Comparator.comparingInt(Operation::getSepNumber)).toList();

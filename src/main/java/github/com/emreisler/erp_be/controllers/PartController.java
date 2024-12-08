@@ -34,11 +34,6 @@ public class PartController {
         return ResponseEntity.ok(partService.GetByNumber(number));
     }
 
-    @GetMapping("/name/{name}")
-    public ResponseEntity<PartDto> getPartByName(@PathVariable String name) throws Exception {
-        return ResponseEntity.ok(partService.GetByName(name));
-    }
-
     @PostMapping
     public ResponseEntity<PartDto> createPart(@RequestBody PartDto partDto) throws Exception {
         return ResponseEntity.status(HttpStatus.CREATED).body(partService.Create(partDto));
@@ -47,6 +42,11 @@ public class PartController {
     @PutMapping("/operation/{partNumber}")
     public ResponseEntity<PartDto> AttachOperation(@PathVariable String partNumber, @RequestBody OperationDto operation) throws Exception {
         return ResponseEntity.status(HttpStatus.CREATED).body(partService.AttachOperation(partNumber, operation));
+    }
+
+    @DeleteMapping("/operation/{partNumber}")
+    ResponseEntity<PartDto> DeleteOperation(@PathVariable String partNumber, @RequestParam int stepNumber) throws Exception {
+        return ResponseEntity.status(HttpStatus.OK).body(partService.DeleteOperation(partNumber, stepNumber));
     }
 
     @DeleteMapping("/{partNumber}")

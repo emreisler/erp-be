@@ -33,4 +33,9 @@ public class StampServiceImpl implements StampService {
     public List<StampDto> getByPoCode(String code) throws ErpRuntimeException {
         return stampRepository.findByPoCode(code).stream().map(StampConverter::toDto).collect(Collectors.toList());
     }
+
+    @Override
+    public boolean isStamped(String poCode, int stepNumber) throws ErpRuntimeException {
+        return stampRepository.existsByPoCodeAndStepNumber(poCode, stepNumber);
+    }
 }
