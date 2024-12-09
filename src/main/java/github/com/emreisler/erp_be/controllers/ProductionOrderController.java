@@ -2,7 +2,6 @@ package github.com.emreisler.erp_be.controllers;
 
 import github.com.emreisler.erp_be.dto.CreateProductionOrderRequest;
 import github.com.emreisler.erp_be.dto.ProductionOrderDto;
-import github.com.emreisler.erp_be.dto.StampDto;
 import github.com.emreisler.erp_be.service.operator.OperatorService;
 import github.com.emreisler.erp_be.service.productionOrder.ProductionOrderService;
 import org.springframework.http.ResponseEntity;
@@ -42,8 +41,5 @@ public class ProductionOrderController {
         return ResponseEntity.ok(productionOrderService.create(request));
     }
 
-    @PutMapping("/stamp")
-    public ResponseEntity<ProductionOrderDto> stamp(@RequestBody StampDto stampDto) throws Exception {
-        return ResponseEntity.ok(operatorService.stamp(stampDto));
-    }
+
 }

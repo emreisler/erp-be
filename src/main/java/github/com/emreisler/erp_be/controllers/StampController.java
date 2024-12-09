@@ -1,12 +1,11 @@
 package github.com.emreisler.erp_be.controllers;
 
+import github.com.emreisler.erp_be.dto.ProductionOrderDto;
 import github.com.emreisler.erp_be.dto.StampDto;
+import github.com.emreisler.erp_be.service.operator.OperatorService;
 import github.com.emreisler.erp_be.service.stamp.StampService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -15,13 +14,21 @@ import java.util.List;
 public class StampController {
 
     private final StampService stampService;
+    private final OperatorService operatorService;
 
-    public StampController(StampService stampService) {
+
+    public StampController(StampService stampService, OperatorService operatorService) {
         this.stampService = stampService;
+        this.operatorService = operatorService;
     }
 
     @GetMapping("{poCode}")
     public ResponseEntity<List<StampDto>> getStamp(@PathVariable String poCode) {
         return ResponseEntity.ok(stampService.getByPoCode(poCode));
+    }
+
+    @PutMapping
+    public ResponseEntity<ProductionOrderDto> stamp(@RequestBody StampDto stampDto) throws Exception {
+        return ResponseEntity.ok(operatorService.stamp(stampDto));
     }
 }
