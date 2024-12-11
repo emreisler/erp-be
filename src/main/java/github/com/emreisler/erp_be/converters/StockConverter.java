@@ -17,6 +17,7 @@ public class StockConverter {
                 stock.getName(),
                 stock.getQuantity(),
                 stock.getUnitPrice(),
+                stock.getCurrency(),
                 stock.getUnit(),
                 stock.getCode()
         );
@@ -31,6 +32,7 @@ public class StockConverter {
                 stockDto.getName(),
                 stockDto.getQuantity(),
                 stockDto.getUnitPrice(),
+                stockDto.getCurrency(),
                 stockDto.getUnit(),
                 stockDto.getCode()
         );

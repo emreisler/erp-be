@@ -1,72 +1,23 @@
 package github.com.emreisler.erp_be.dto;
 
+import github.com.emreisler.erp_be.enums.Currency;
 import github.com.emreisler.erp_be.enums.Unit;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class StockDto {
-
-    public StockDto(UUID uuid, String name, float quantity, float unitPrice, Unit unit, String code) {
-        this.uuid = uuid;
-        this.name = name;
-        this.quantity = quantity;
-        this.unitPrice = unitPrice;
-        this.unit = unit;
-        this.code = code;
-    }
 
     private UUID uuid;
     private String name;
     private float quantity;
     private float unitPrice;
+    private Currency currency;
     private Unit unit;
     private String code;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public float getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(float quantity) {
-        this.quantity = quantity;
-    }
-
-    public float getUnitPrice() {
-        return unitPrice;
-    }
-
-    public void setUnitPrice(float unitPrice) {
-        this.unitPrice = unitPrice;
-    }
-
-    public Unit getUnit() {
-        return unit;
-    }
-
-    public void setUnit(Unit unit) {
-        this.unit = unit;
-    }
 }

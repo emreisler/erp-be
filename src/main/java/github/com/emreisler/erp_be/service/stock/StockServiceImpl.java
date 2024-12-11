@@ -51,7 +51,7 @@ public class StockServiceImpl implements StockService {
     public StockDto Create(StockDto stockDto) throws ErpRuntimeException {
         validator.validate(stockDto);
         stockDto.setUuid(UUID.randomUUID());
-        String code = "PO-" + stockDto.getUuid().toString().substring(0, 8).toUpperCase();
+        stockDto.setCode("ST-" + stockDto.getUuid().toString().substring(0, 8).toUpperCase());
         return StockConverter.toDto(stockRepository.save(StockConverter.toEntity(stockDto)));
     }
 
