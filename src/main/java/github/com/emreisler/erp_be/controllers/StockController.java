@@ -39,9 +39,9 @@ public class StockController {
         return ResponseEntity.ok(this.stockService.Update(code, stockDto));
     }
 
-    @DeleteMapping("/stock/{uuid}")
-    public ResponseEntity<String> DeleteStock(@PathVariable String uuid) throws Exception {
-        stockService.Delete(uuid);
+    @DeleteMapping("/stock/{code}")
+    public ResponseEntity<String> DeleteStock(@PathVariable String code) throws Exception {
+        stockService.Delete(code);
         return ResponseEntity.ok("Stock deleted");
     }
 }

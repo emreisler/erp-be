@@ -51,6 +51,7 @@ public class StockServiceImpl implements StockService {
     public StockDto Create(StockDto stockDto) throws ErpRuntimeException {
         validator.validate(stockDto);
         stockDto.setUuid(UUID.randomUUID());
+        String code = "PO-" + stockDto.getUuid().toString().substring(0, 8).toUpperCase();
         return StockConverter.toDto(stockRepository.save(StockConverter.toEntity(stockDto)));
     }
 
@@ -79,4 +80,7 @@ public class StockServiceImpl implements StockService {
         stockRepository.findByCode(code).orElseThrow(() -> new NotFoundException("Stock not found"));
         stockRepository.deleteByCode(code);
     }
+
 }
+
+
