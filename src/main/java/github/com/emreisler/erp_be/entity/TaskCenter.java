@@ -33,6 +33,8 @@ public class TaskCenter {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    public TaskCenter() {
+    }
 
     public TaskCenter(UUID uuid, int number, String name, boolean isInspection) {
         this.uuid = uuid;
