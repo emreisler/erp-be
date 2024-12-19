@@ -1,7 +1,8 @@
-package github.com.emreisler.erp_be.exception;
+package github.com.emreisler.erp_be.controllers;
 
 
 import github.com.emreisler.erp_be.error.ErrorResponse;
+import github.com.emreisler.erp_be.exception.ErpRuntimeException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

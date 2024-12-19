@@ -61,6 +61,8 @@ public class ProductionOrderServiceImpl implements ProductionOrderService {
             po.setEndDate(productionOrderDto.getEndDate());
             po.setPartNumber(productionOrderDto.getPartNumber());
             po.setStatus(productionOrderDto.getStatus());
+            po.setCurrentStep(productionOrderDto.getCurrentStep());
+            po.setCurrentTaskCenter(productionOrderDto.getCurrentTaskCenter());
             return productionOrderRepository.save(po);
         }).orElseThrow(() -> new NotFoundException("ProductionOrder not found for code: " + productionOrderDto.getCode()));
         return ProductionOrderConverter.toDto(updatedPo);

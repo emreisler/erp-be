@@ -1,24 +1,14 @@
 package github.com.emreisler.erp_be.entity;
 
 import jakarta.persistence.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 public class TaskCenter {
-
-    public TaskCenter(UUID uuid, int number, String name, Boolean isInspection) {
-        this.uuid = uuid;
-        this.number = number;
-        this.name = name;
-        this.isInspection = isInspection;
-    }
-
-    public TaskCenter() {
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,21 +27,35 @@ public class TaskCenter {
     private boolean isInspection;
 
 
-    @CreatedDate
-    Date createdAt;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
-    @LastModifiedDate
-    Date modifiedAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
 
-    public void setId(Long id) {
-        this.id = id;
+    public TaskCenter(UUID uuid, int number, String name, boolean isInspection) {
+        this.uuid = uuid;
+        this.number = number;
+        this.name = name;
+        this.isInspection = isInspection;
     }
 
     public Long getId() {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
 
     public int getNumber() {
         return number;
@@ -69,19 +73,27 @@ public class TaskCenter {
         this.name = name;
     }
 
-    public Boolean getIsInspection() {
+    public boolean getIsInspection() {
         return isInspection;
     }
 
-    public void setIsInspection(Boolean inspection) {
+    public void setIsInspection(boolean inspection) {
         isInspection = inspection;
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = UUID.randomUUID();
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

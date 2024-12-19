@@ -2,8 +2,16 @@ package github.com.emreisler.erp_be.entity;
 
 import github.com.emreisler.erp_be.enums.CategoryType;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
 public class Category {
 
     @Id
@@ -14,26 +22,17 @@ public class Category {
     @Column(nullable = false, unique = true)
     private CategoryType type;
 
+    public Category() {
+    }
+
     public Category(CategoryType type) {
         this.type = type;
     }
 
-    public Category() {
-    }
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
-    public Long getId() {
-        return id;
-    }
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public CategoryType getType() {
-        return type;
-    }
-
-    public void setType(CategoryType type) {
-        this.type = type;
-    }
 }

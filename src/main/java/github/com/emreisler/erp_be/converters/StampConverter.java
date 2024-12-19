@@ -18,10 +18,11 @@ public class StampConverter {
         if (stampDto == null) {
             return null;
         }
-        return new Stamp(
-                stampDto.getProductionOrderCode(),
-                stampDto.getStepNumber(),
-                stampDto.getUserEmail(),
-                LocalDateTime.now());
+        var stamp = new Stamp();
+        stamp.setStampedAt(LocalDateTime.now());
+        stamp.setStampedBy(stampDto.getUserEmail());
+        stamp.setPoCode(stampDto.getProductionOrderCode());
+        stamp.setStepNumber(stampDto.getStepNumber());
+        return stamp;
     }
 }

@@ -1,9 +1,8 @@
 package github.com.emreisler.erp_be.entity;
 
-import github.com.emreisler.erp_be.enums.CategoryType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -12,9 +11,9 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Data
-public class Part {
-
+@Getter
+@Setter
+public class Assembly {
     @Id
     @GeneratedValue
     private Long id;
@@ -25,25 +24,24 @@ public class Part {
     @Column(unique = true, nullable = false)
     private String number;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String projectCode;
 
-    @NotNull
-    @Enumerated(EnumType.ORDINAL)
-    private CategoryType category;
+    @ManyToMany
+    private List<Part> partList;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    private List<Stock> stocksList;
-
-    @OneToMany(mappedBy = "part", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "assembly", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Operation> operationList;
+
+    @ManyToMany
+    private List<Stock> stockList;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
 }

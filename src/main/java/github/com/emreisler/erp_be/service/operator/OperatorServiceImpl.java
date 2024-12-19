@@ -52,9 +52,11 @@ public class OperatorServiceImpl implements OperatorService {
 
         int previousStep = 0;
         var stepExist = false;
+        var taskCenterNo = 0;
         for (var operation : sortedOperations) {
             if (stampDto.getStepNumber() == operation.getSepNumber()){
                 stepExist = true;
+                taskCenterNo = operation.getTaskCenterNo();
             }
             if (stepExist){
                 break;
@@ -65,6 +67,9 @@ public class OperatorServiceImpl implements OperatorService {
         if (!stepExist){
             throw new BadRequestException("step not exist");
         }
+
+        prodOrder.setCurrentStep(stampDto.getStepNumber());
+        prodOrder.setCurrentTaskCenter(taskCenterNo);
 
         if (previousStep != 0 && !stampService.isStamped(stampDto.getProductionOrderCode(), previousStep)){
             throw new BadRequestException("previous step is not stamped");
