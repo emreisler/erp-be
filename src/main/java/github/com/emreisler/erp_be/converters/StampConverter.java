@@ -11,7 +11,7 @@ public class StampConverter {
         if (stamp == null) {
             return null;
         }
-        return new StampDto(stamp.getStampedBy(), stamp.getPoCode(), stamp.getStepNumber());
+        return new StampDto(stamp.getStampedBy(), stamp.getProductionOrder().getCode(), stamp.getStepNumber());
     }
 
     public static Stamp toEntity(StampDto stampDto) {
@@ -21,7 +21,7 @@ public class StampConverter {
         var stamp = new Stamp();
         stamp.setStampedAt(LocalDateTime.now());
         stamp.setStampedBy(stampDto.getUserEmail());
-        stamp.setPoCode(stampDto.getProductionOrderCode());
+        stamp.setProductionOrder(stamp.getProductionOrder());
         stamp.setStepNumber(stampDto.getStepNumber());
         return stamp;
     }

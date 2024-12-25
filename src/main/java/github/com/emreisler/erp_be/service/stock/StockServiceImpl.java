@@ -2,6 +2,7 @@ package github.com.emreisler.erp_be.service.stock;
 
 import github.com.emreisler.erp_be.converters.StockConverter;
 import github.com.emreisler.erp_be.dto.StockDto;
+import github.com.emreisler.erp_be.exception.BadRequestException;
 import github.com.emreisler.erp_be.exception.ErpRuntimeException;
 import github.com.emreisler.erp_be.exception.NotFoundException;
 import github.com.emreisler.erp_be.repository.StockRepository;
@@ -58,17 +59,17 @@ public class StockServiceImpl implements StockService {
     @Override
     public StockDto Update(String code, StockDto stockDto) throws ErpRuntimeException {
 
-        validator.validate(stockDto);
-
-        stockDto.setUuid(UUID.randomUUID());
+        if (stockDto.getQuantity() < 0) {
+            throw new BadRequestException("stock quantity can not be less than zero");
+        }
 
         var updatedStock = stockRepository.findByCode(code).map(stock -> {
-            stock.setCode(stockDto.getCode());
-            stock.setName(stockDto.getName());
+//            stock.setCode(stockDto.getCode());
+//            stock.setName(stockDto.getName());
             stock.setQuantity(stockDto.getQuantity());
-            stock.setUnit(stockDto.getUnit());
-            stock.setUnitPrice(stockDto.getUnitPrice());
-            stock.setUuid(stockDto.getUuid());
+//            stock.setUnit(stockDto.getUnit());
+//            stock.setUnitPrice(stockDto.getUnitPrice());
+//            stock.setUuid(stockDto.getUuid());
             return stockRepository.save(stock);
         }).orElseThrow(() -> new NotFoundException("Stock not found"));
         return StockConverter.toDto(updatedStock);

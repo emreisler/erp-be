@@ -11,6 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -48,6 +49,9 @@ public class ProductionOrder {
 
     @Column(nullable = false)
     private LocalDate endDate;
+
+    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    private List<Stamp> stampList;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

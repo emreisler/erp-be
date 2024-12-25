@@ -24,7 +24,7 @@ public interface AssemblyService {
 
     AssemblyDto RemovePart(String assemblyNo, PartDto partDto) throws Exception;
 
-    AssemblyDto AddOperation(String assemblyNo, OperationDto operationDto) throws Exception;
+    AssemblyDto AttachOperation(String assemblyNo, OperationDto operationDto) throws Exception;
 
     AssemblyDto RemoveOperation(String assemblyNo, int operationNumber) throws Exception;
 

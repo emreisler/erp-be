@@ -1,7 +1,9 @@
 package github.com.emreisler.erp_be.controllers;
 
+import github.com.emreisler.erp_be.dto.AttachStockRequest;
 import github.com.emreisler.erp_be.dto.OperationDto;
 import github.com.emreisler.erp_be.dto.PartDto;
+import github.com.emreisler.erp_be.dto.StockDto;
 import github.com.emreisler.erp_be.service.part.PartService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +36,16 @@ public class PartController {
         return ResponseEntity.ok(partService.GetByNumber(number));
     }
 
+    @GetMapping("/operation/{partNo}")
+    public ResponseEntity<List<OperationDto>> getOperations(@PathVariable String partNo) throws Exception {
+        return ResponseEntity.ok(partService.GetOperations(partNo));
+    }
+
+    @GetMapping("/stock/{partNo}")
+    public ResponseEntity<List<StockDto>> getStocksByPartNo(@PathVariable String partNo) throws Exception {
+        return ResponseEntity.ok(partService.getStocks(partNo));
+    }
+
     @PostMapping
     public ResponseEntity<PartDto> createPart(@RequestBody PartDto partDto) throws Exception {
         return ResponseEntity.status(HttpStatus.CREATED).body(partService.Create(partDto));
@@ -42,6 +54,11 @@ public class PartController {
     @PutMapping("/operation/{partNumber}")
     public ResponseEntity<PartDto> AttachOperation(@PathVariable String partNumber, @RequestBody OperationDto operation) throws Exception {
         return ResponseEntity.status(HttpStatus.CREATED).body(partService.AttachOperation(partNumber, operation));
+    }
+
+    @PutMapping("/stock/{partNumber}")
+    public ResponseEntity<PartDto> addStock(@PathVariable String partNumber, @RequestBody AttachStockRequest attachStockRequest) throws Exception {
+        return ResponseEntity.status(HttpStatus.CREATED).body(partService.attachStock(partNumber, attachStockRequest));
     }
 
     @DeleteMapping("/operation/{partNumber}")
@@ -54,4 +71,6 @@ public class PartController {
         partService.Delete(partNumber);
         return ResponseEntity.ok("Part deleted successfully");
     }
+
+
 }

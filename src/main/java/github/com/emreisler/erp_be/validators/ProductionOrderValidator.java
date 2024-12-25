@@ -20,6 +20,9 @@ public class ProductionOrderValidator implements Validator<CreateProductionOrder
         if (object.getQuantity() <= 0) {
             throw new BadRequestException("quantity is 0 or less");
         }
+        if (object.getEndDate() == null) {
+            throw new BadRequestException("endDate is null");
+        }
 
     }
 }

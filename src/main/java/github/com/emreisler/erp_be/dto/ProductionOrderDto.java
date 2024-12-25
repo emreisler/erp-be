@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -18,6 +19,7 @@ public class ProductionOrderDto {
     private ProductionOrderStatus status;
     private int currentStep;
     private int totalSteps;
+    private List<StampDto> stampList;
     private int currentTaskCenter;
     private LocalDate endDate;
 }

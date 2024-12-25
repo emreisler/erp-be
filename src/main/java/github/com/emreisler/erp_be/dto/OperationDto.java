@@ -3,6 +3,7 @@ package github.com.emreisler.erp_be.dto;
 public class OperationDto {
 
     private String partNumber;
+    private String assemblyNumber;
     private int sepNumber;
     private String description;
     private String imageUrl;
@@ -57,5 +58,13 @@ public class OperationDto {
 
     public void setTaskCenterNo(int taskCenterNo) {
         this.taskCenterNo = taskCenterNo;
+    }
+
+    public String getAssemblyNumber() {
+        return assemblyNumber;
+    }
+
+    public void setAssemblyNumber(String assemblyNumber) {
+        this.assemblyNumber = assemblyNumber;
     }
 }

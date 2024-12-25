@@ -12,6 +12,8 @@ public class AssemblyConverter {
         dto.setProjectCode(assembly.getProjectCode());
         dto.setCreatedAt(assembly.getCreatedAt());
         dto.setUpdatedAt(assembly.getUpdatedAt());
+        dto.setOperationList(OperationConverter.toDto(assembly.getOperationList()));
+        dto.setStockList(StockConverter.toDto(assembly.getStockList()));
         return dto;
     }
 
@@ -23,6 +25,8 @@ public class AssemblyConverter {
         assembly.setProjectCode(dto.getProjectCode());
         assembly.setCreatedAt(dto.getCreatedAt());
         assembly.setUpdatedAt(dto.getUpdatedAt());
+        assembly.setOperationList(OperationConverter.toEntity(dto.getOperationList()));
+        assembly.setStockList(StockConverter.toEntity(dto.getStockList()));
         return assembly;
     }
 }

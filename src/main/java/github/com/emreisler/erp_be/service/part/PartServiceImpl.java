@@ -2,14 +2,20 @@ package github.com.emreisler.erp_be.service.part;
 
 import github.com.emreisler.erp_be.converters.OperationConverter;
 import github.com.emreisler.erp_be.converters.PartConverter;
+import github.com.emreisler.erp_be.converters.StockConverter;
+import github.com.emreisler.erp_be.dto.AttachStockRequest;
 import github.com.emreisler.erp_be.dto.OperationDto;
 import github.com.emreisler.erp_be.dto.PartDto;
+import github.com.emreisler.erp_be.dto.StockDto;
 import github.com.emreisler.erp_be.entity.Operation;
+import github.com.emreisler.erp_be.entity.Part;
 import github.com.emreisler.erp_be.exception.BadRequestException;
 import github.com.emreisler.erp_be.exception.ConflictException;
 import github.com.emreisler.erp_be.exception.NotFoundException;
 import github.com.emreisler.erp_be.repository.OperationRepository;
 import github.com.emreisler.erp_be.repository.PartRepository;
+import github.com.emreisler.erp_be.repository.StockRepository;
+import github.com.emreisler.erp_be.repository.TaskCenterRepository;
 import github.com.emreisler.erp_be.validators.Validator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,12 +33,16 @@ public class PartServiceImpl implements PartService {
 
     private final PartRepository partRepository;
     private final OperationRepository operationRepository;
+    private final TaskCenterRepository taskCenterRepository;
+    private final StockRepository stockRepository;
     private final Validator<PartDto> partValidator;
 
 
-    public PartServiceImpl(PartRepository partRepository, OperationRepository operationRepository, Validator<PartDto> partValidator) {
+    public PartServiceImpl(PartRepository partRepository, OperationRepository operationRepository, TaskCenterRepository taskCenterRepository, StockRepository stockRepository, Validator<PartDto> partValidator) {
         this.partRepository = partRepository;
         this.operationRepository = operationRepository;
+        this.taskCenterRepository = taskCenterRepository;
+        this.stockRepository = stockRepository;
         this.partValidator = partValidator;
     }
 
@@ -54,11 +64,24 @@ public class PartServiceImpl implements PartService {
 
     @Override
     public PartDto GetByNumber(String number) throws Exception {
-        var part = partRepository.findByNumber(number);
-        System.out.println(part);
+
         return partRepository.findByNumber(number)
                 .map(PartConverter::toDto)
                 .orElseThrow(() -> new NotFoundException(String.format("Part with number %s not found", number)));
+    }
+
+    @Override
+    public List<OperationDto> GetOperations(String partNo) throws Exception {
+        Part part = partRepository.findByNumber(partNo).orElseThrow(() -> new NotFoundException(String.format("Part with number %s not found", partNo)));
+
+        return part.getOperationList().stream().map(OperationConverter::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<StockDto> getStocks(String partNo) throws Exception {
+        Part part = partRepository.findByNumber(partNo).orElseThrow(() -> new NotFoundException(String.format("Part with number %s not found", partNo)));
+
+        return part.getStocksList().stream().map(StockConverter::toDto).collect(Collectors.toList());
     }
 
     @Override
@@ -83,6 +106,12 @@ public class PartServiceImpl implements PartService {
 
     @Override
     public PartDto AttachOperation(String partNumber, OperationDto operation) throws Exception {
+
+        // todo check task center exist
+        if (!taskCenterRepository.existsByNumber(operation.getTaskCenterNo())) {
+            throw new BadRequestException(String.format("TaskCenter number %s not found", operation.getTaskCenterNo()));
+        }
+
         if (operation.getSepNumber() <= 0) {
             throw new BadRequestException(String.format("Part operation number must be greater than zero", operation.getSepNumber()));
         }
@@ -107,6 +136,24 @@ public class PartServiceImpl implements PartService {
         var updatedPart = partRepository.save(part);
 
         return PartConverter.toDto(updatedPart);
+
+    }
+
+    @Override
+    public PartDto attachStock(String partNumber, AttachStockRequest attachStockRequest) throws Exception {
+        var stock = stockRepository.findByCode(attachStockRequest.getCode()).orElseThrow(() -> new NotFoundException(String.format("Stock with code %s not found", attachStockRequest.getCode())));
+
+        var part = partRepository.findByNumber(partNumber).orElseThrow(() -> new NotFoundException(String.format("Part with number %s not found", partNumber)));
+
+        var stocks = part.getStocksList();
+
+        stocks.add(stock);
+
+        try {
+            return PartConverter.toDto(partRepository.save(part));
+        } catch (Exception e) {
+            throw e;
+        }
 
     }
 

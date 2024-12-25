@@ -2,7 +2,7 @@ package github.com.emreisler.erp_be.controllers;
 
 import github.com.emreisler.erp_be.dto.CreateProductionOrderRequest;
 import github.com.emreisler.erp_be.dto.ProductionOrderDto;
-import github.com.emreisler.erp_be.service.operator.OperatorService;
+import github.com.emreisler.erp_be.dto.StampDto;
 import github.com.emreisler.erp_be.service.productionOrder.ProductionOrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +14,9 @@ import java.util.List;
 public class ProductionOrderController {
 
     private final ProductionOrderService productionOrderService;
-    private final OperatorService operatorService;
 
-    public ProductionOrderController(ProductionOrderService productionOrderService, OperatorService operatorService) {
+    public ProductionOrderController(ProductionOrderService productionOrderService) {
         this.productionOrderService = productionOrderService;
-        this.operatorService = operatorService;
     }
 
     @GetMapping
@@ -31,6 +29,11 @@ public class ProductionOrderController {
         return ResponseEntity.ok(productionOrderService.getByPartNo(partNo));
     }
 
+    @GetMapping("/by-code/{code}")
+    public ResponseEntity<ProductionOrderDto> getByCode(@PathVariable String code) {
+        return ResponseEntity.ok(productionOrderService.getByCode(code));
+    }
+
     @GetMapping("/by-task-center/{taskCenter}")
     public ResponseEntity<List<ProductionOrderDto>> getByCurrentTaskCenterNo(@PathVariable int taskCenter) {
         return ResponseEntity.ok(productionOrderService.getByCurrentTaskCenterNo(taskCenter));
@@ -39,6 +42,16 @@ public class ProductionOrderController {
     @PostMapping
     public ResponseEntity<ProductionOrderDto> create(@RequestBody CreateProductionOrderRequest request) {
         return ResponseEntity.ok(productionOrderService.create(request));
+    }
+
+    @GetMapping("/stamp/{poCode}")
+    public ResponseEntity<List<StampDto>> getStamp(@PathVariable String poCode) throws Exception {
+        return ResponseEntity.ok(productionOrderService.getStampsByCode(poCode));
+    }
+
+    @PutMapping("/stamp")
+    public ResponseEntity<ProductionOrderDto> stamp(@RequestBody StampDto stampDto) throws Exception {
+        return ResponseEntity.ok(productionOrderService.stamp(stampDto));
     }
 
 

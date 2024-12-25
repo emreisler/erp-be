@@ -1,16 +1,23 @@
 package github.com.emreisler.erp_be.service.productionOrder;
 
 import github.com.emreisler.erp_be.converters.ProductionOrderConverter;
+import github.com.emreisler.erp_be.converters.StampConverter;
 import github.com.emreisler.erp_be.dto.CreateProductionOrderRequest;
+import github.com.emreisler.erp_be.dto.OperationDto;
 import github.com.emreisler.erp_be.dto.ProductionOrderDto;
+import github.com.emreisler.erp_be.dto.StampDto;
 import github.com.emreisler.erp_be.entity.Operation;
 import github.com.emreisler.erp_be.entity.Part;
 import github.com.emreisler.erp_be.entity.ProductionOrder;
+import github.com.emreisler.erp_be.entity.Stamp;
 import github.com.emreisler.erp_be.enums.ProductionOrderStatus;
+import github.com.emreisler.erp_be.exception.BadRequestException;
 import github.com.emreisler.erp_be.exception.ErpRuntimeException;
 import github.com.emreisler.erp_be.exception.NotFoundException;
 import github.com.emreisler.erp_be.repository.PartRepository;
 import github.com.emreisler.erp_be.repository.ProductionOrderRepository;
+import github.com.emreisler.erp_be.repository.StampRepository;
+import github.com.emreisler.erp_be.service.part.PartService;
 import github.com.emreisler.erp_be.validators.Validator;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -18,19 +25,24 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductionOrderServiceImpl implements ProductionOrderService {
 
+    private final PartService partService;
     private final ProductionOrderRepository productionOrderRepository;
     private final PartRepository partRepository;
+    private final StampRepository stampRepository;
     private final Validator<CreateProductionOrderRequest> validator;
 
 
-    public ProductionOrderServiceImpl(ProductionOrderRepository productionOrderRepository, PartRepository partRepository, Validator<CreateProductionOrderRequest> validator) {
+    public ProductionOrderServiceImpl(PartService partService, ProductionOrderRepository productionOrderRepository, PartRepository partRepository, StampRepository stampRepository, Validator<CreateProductionOrderRequest> validator) {
+        this.partService = partService;
         this.productionOrderRepository = productionOrderRepository;
         this.partRepository = partRepository;
         this.validator = validator;
+        this.stampRepository = stampRepository;
     }
 
     public List<ProductionOrderDto> getAll() {
@@ -80,6 +92,7 @@ public class ProductionOrderServiceImpl implements ProductionOrderService {
 
         validator.validate(request);
 
+
         // Generate UUID and Code
         UUID orderId = UUID.randomUUID();
         String code = "PO-" + orderId.toString().substring(0, 8).toUpperCase();
@@ -117,5 +130,99 @@ public class ProductionOrderServiceImpl implements ProductionOrderService {
         } catch (Exception e) {
             throw new IllegalArgumentException("Error while saving production order");
         }
+
+
     }
+
+    @Override
+    @Transactional
+    public ProductionOrderDto stamp(StampDto stampDto) throws Exception {
+
+//        validator.validate(stampDto);//todo validate stamp
+
+        var prodOrder = productionOrderRepository.findByCode(stampDto.getProductionOrderCode())
+                .orElseThrow(() -> new NotFoundException("ProductionOrder not found for code: " + stampDto.getProductionOrderCode()));
+
+        var part = partService.GetByNumber(prodOrder.getPartNumber());
+
+        if (part.getOperationList().isEmpty()) {
+            throw new BadRequestException("part has no operation to stamp");
+        }
+
+        if (this.isStamped(prodOrder, stampDto.getStepNumber())) {
+            throw new BadRequestException("step is already stamped");
+        }
+
+        var sortedOperations = part.getOperationList()
+                .stream()
+                .sorted(Comparator.comparingInt(OperationDto::getSepNumber))
+                .toList();
+
+        int previousStep = 0;
+        var stepExist = false;
+        var taskCenterNo = 0;
+        for (var operation : sortedOperations) {
+            if (stampDto.getStepNumber() == operation.getSepNumber()) {
+                stepExist = true;
+                taskCenterNo = operation.getTaskCenterNo();
+            }
+            if (stepExist) {
+                break;
+            }
+            previousStep = operation.getSepNumber();
+        }
+
+        if (!stepExist) {
+            throw new BadRequestException("step not exist");
+        }
+
+        prodOrder.setCurrentStep(stampDto.getStepNumber());
+        prodOrder.setCurrentTaskCenter(taskCenterNo);
+
+        if (previousStep != 0 && !this.isStamped(prodOrder, previousStep)) {
+            throw new BadRequestException("previous step is not stamped");
+        }
+
+        if (sortedOperations.get(sortedOperations.size() - 1).getSepNumber() == stampDto.getStepNumber()) {
+            prodOrder.setStatus(ProductionOrderStatus.COMPLETED);
+        } else {
+            prodOrder.setStatus(ProductionOrderStatus.IN_PROGRESS);
+        }
+
+        var stamp = StampConverter.toEntity(stampDto);
+        stamp.setProductionOrder(prodOrder);
+
+
+        try {
+            var persistedStamp = stampRepository.save(stamp);
+            var stamps = prodOrder.getStampList();
+            stamps.add(persistedStamp);
+            prodOrder.setStampList(stamps);
+            var updatedOrder = productionOrderRepository.save(prodOrder);
+            return ProductionOrderConverter.toDto(updatedOrder);
+        } catch (Exception e) {
+            throw new ErpRuntimeException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ProductionOrderDto removeStamp(String poCode, int stepNumber) throws Exception {
+        stampRepository.deleteByProductionOrderCodeAndStepNumber(poCode, stepNumber);
+        return ProductionOrderConverter.toDto(productionOrderRepository.findByCode(poCode).orElseThrow(() -> new NotFoundException("ProductionOrder not found for code: " + poCode)));
+    }
+
+    @Override
+    public List<StampDto> getStampsByCode(String code) throws Exception {
+        return stampRepository.findByProductionOrderCode(code).stream().map(StampConverter::toDto).collect(Collectors.toList());
+    }
+
+    private boolean isStamped(ProductionOrder productionOrder, int stepNumber) {
+        for (Stamp stamp : productionOrder.getStampList()) {
+            if (stamp.getStepNumber() == stepNumber) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

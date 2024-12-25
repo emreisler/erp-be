@@ -3,6 +3,8 @@ package github.com.emreisler.erp_be.converters;
 import github.com.emreisler.erp_be.dto.ProductionOrderDto;
 import github.com.emreisler.erp_be.entity.ProductionOrder;
 
+import java.util.stream.Collectors;
+
 public class ProductionOrderConverter {
 
     public static ProductionOrderDto toDto(ProductionOrder productionOrder) {
@@ -16,6 +18,10 @@ public class ProductionOrderConverter {
         dto.setTotalSteps(productionOrder.getTotalSteps());
         dto.setCurrentTaskCenter(productionOrder.getCurrentTaskCenter());
         dto.setEndDate(productionOrder.getEndDate());
+        if (productionOrder.getStampList() != null && !productionOrder.getStampList().isEmpty()) {
+            dto.setStampList(productionOrder.getStampList().stream().map(StampConverter::toDto).collect(Collectors.toList()));
+        }
+
         return dto;
     }
 
@@ -30,6 +36,7 @@ public class ProductionOrderConverter {
         productionOrder.setTotalSteps(dto.getTotalSteps());
         productionOrder.setCurrentTaskCenter(dto.getCurrentTaskCenter());
         productionOrder.setEndDate(dto.getEndDate());
+        productionOrder.setStampList(dto.getStampList().stream().map(StampConverter::toEntity).collect(Collectors.toList()));
         return productionOrder;
     }
 }

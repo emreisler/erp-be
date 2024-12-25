@@ -13,13 +13,19 @@ public class OperationConverter {
             return null;
         }
 
-        return new OperationDto(
-                operation.getPart().getNumber(),
-                operation.getSepNumber(),
-                operation.getDescription(),
-                operation.getImageUrl(),
-                operation.getTaskCenterNo()
-        );
+        var operationDto = new OperationDto();
+        operationDto.setSepNumber(operation.getSepNumber());
+        operationDto.setDescription(operation.getDescription());
+        operationDto.setImageUrl(operation.getImageUrl());
+        operationDto.setTaskCenterNo(operation.getTaskCenterNo());
+        if (operation.getPart() != null) {
+            operationDto.setPartNumber(operation.getPart().getNumber());
+        }
+        if (operation.getAssembly() != null) {
+            operationDto.setAssemblyNumber(operation.getAssembly().getNumber());
+        }
+
+        return operationDto;
     }
 
     public static Operation toEntity(OperationDto operationDto) {
