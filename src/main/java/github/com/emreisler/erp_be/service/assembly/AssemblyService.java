@@ -1,8 +1,6 @@
 package github.com.emreisler.erp_be.service.assembly;
 
-import github.com.emreisler.erp_be.dto.AssemblyDto;
-import github.com.emreisler.erp_be.dto.OperationDto;
-import github.com.emreisler.erp_be.dto.PartDto;
+import github.com.emreisler.erp_be.dto.*;
 
 import java.util.List;
 
@@ -24,9 +22,17 @@ public interface AssemblyService {
 
     AssemblyDto RemovePart(String assemblyNo, PartDto partDto) throws Exception;
 
+    List<PartDto> getPartsByAssemblyNo(String assemblyNo) throws Exception;
+
     AssemblyDto AttachOperation(String assemblyNo, OperationDto operationDto) throws Exception;
 
     AssemblyDto RemoveOperation(String assemblyNo, int operationNumber) throws Exception;
+
+    List<OperationDto> getOperations(String assemblyNo) throws Exception;
+
+    AssemblyDto attachStock(String assemblyNo, AttachStockRequest attachStockRequest) throws Exception;
+
+    List<StockDto> getStocks(String assemblyNo) throws Exception;
 
     AssemblyDto GetOperations(String assemblyNo) throws Exception;
 

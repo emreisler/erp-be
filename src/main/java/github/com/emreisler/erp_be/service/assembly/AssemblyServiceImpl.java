@@ -2,14 +2,15 @@ package github.com.emreisler.erp_be.service.assembly;
 
 import github.com.emreisler.erp_be.converters.AssemblyConverter;
 import github.com.emreisler.erp_be.converters.OperationConverter;
-import github.com.emreisler.erp_be.dto.AssemblyDto;
-import github.com.emreisler.erp_be.dto.OperationDto;
-import github.com.emreisler.erp_be.dto.PartDto;
+import github.com.emreisler.erp_be.converters.PartConverter;
+import github.com.emreisler.erp_be.converters.StockConverter;
+import github.com.emreisler.erp_be.dto.*;
 import github.com.emreisler.erp_be.entity.Operation;
 import github.com.emreisler.erp_be.exception.BadRequestException;
 import github.com.emreisler.erp_be.exception.NotFoundException;
 import github.com.emreisler.erp_be.repository.AssemblyRepository;
-import github.com.emreisler.erp_be.repository.OperationRepository;
+import github.com.emreisler.erp_be.repository.PartRepository;
+import github.com.emreisler.erp_be.repository.StockRepository;
 import github.com.emreisler.erp_be.validators.Validator;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +24,15 @@ import java.util.stream.Collectors;
 public class AssemblyServiceImpl implements AssemblyService {
 
     private final AssemblyRepository assemblyRepository;
+    private final StockRepository stockRepository;
+    private final PartRepository partRepository;
     private final Validator<AssemblyDto> validator;
-    private final OperationRepository operationRepository;
 
-    public AssemblyServiceImpl(AssemblyRepository assemblyRepository, Validator<AssemblyDto> validator, OperationRepository operationRepository) {
+    public AssemblyServiceImpl(AssemblyRepository assemblyRepository, StockRepository stockRepository, PartRepository partRepository, Validator<AssemblyDto> validator) {
         this.assemblyRepository = assemblyRepository;
+        this.stockRepository = stockRepository;
+        this.partRepository = partRepository;
         this.validator = validator;
-        this.operationRepository = operationRepository;
     }
 
     @Override
@@ -75,6 +78,13 @@ public class AssemblyServiceImpl implements AssemblyService {
     }
 
     @Override
+    public List<PartDto> getPartsByAssemblyNo(String assemblyNo) throws Exception {
+        var assembly = assemblyRepository.findByNumber(assemblyNo).orElseThrow(() -> new NotFoundException(String.format("No assembly found with number %s", assemblyNo)));
+
+        return assembly.getPartList().stream().map(PartConverter::toDto).collect(Collectors.toList());
+    }
+
+    @Override
     public AssemblyDto AttachOperation(String assemblyNo, OperationDto operationDto) throws Exception {
 
 
@@ -103,6 +113,37 @@ public class AssemblyServiceImpl implements AssemblyService {
     @Override
     public AssemblyDto RemoveOperation(String assemblyNo, int operationNumber) throws Exception {
         return null;
+    }
+
+    @Override
+    public List<OperationDto> getOperations(String assemblyNo) throws Exception {
+        var assembly = assemblyRepository.findByNumber(assemblyNo).orElseThrow(() -> new NotFoundException(String.format("No assembly found with number %s", assemblyNo)));
+
+        return assembly.getOperationList().stream().map(OperationConverter::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public AssemblyDto attachStock(String assemblyNo, AttachStockRequest attachStockRequest) throws Exception {
+        var stock = stockRepository.findByCode(attachStockRequest.getCode()).orElseThrow(() -> new NotFoundException(String.format("Stock with code %s not found", attachStockRequest.getCode())));
+
+        var assembly = assemblyRepository.findByNumber(assemblyNo).orElseThrow(() -> new NotFoundException(String.format("Assembly with number %s not found", assemblyNo)));
+
+        var stocks = assembly.getStockList();
+
+        stocks.add(stock);
+
+        try {
+            return AssemblyConverter.toDto(assemblyRepository.save(assembly));
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @Override
+    public List<StockDto> getStocks(String assemblyNo) throws Exception {
+        var assembly = assemblyRepository.findByNumber(assemblyNo).orElseThrow(() -> new NotFoundException(String.format("No assembly found with number %s", assemblyNo)));
+
+        return assembly.getStockList().stream().map(StockConverter::toDto).collect(Collectors.toList());
     }
 
     @Override
