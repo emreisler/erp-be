@@ -48,7 +48,7 @@ public class PartServiceImpl implements PartService {
 
     @Override
     public List<PartDto> GetAll() throws Exception {
-        return partRepository.findAll()
+        return partRepository.findAllByOrderByUpdatedAtDesc()
                 .stream()
                 .map(PartConverter::toDto)
                 .collect(Collectors.toList());

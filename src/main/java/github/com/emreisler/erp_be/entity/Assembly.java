@@ -24,7 +24,7 @@ public class Assembly {
     @Column(unique = true, nullable = false)
     private String number;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)

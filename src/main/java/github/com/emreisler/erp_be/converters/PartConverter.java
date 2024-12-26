@@ -13,15 +13,18 @@ public class PartConverter {
             return null;
         }
 
-        return new PartDto(
-                part.getUuid(),
-                part.getNumber(),
-                part.getName(),
-                part.getProjectCode(),
-                part.getCategory(),
-                StockConverter.toDto(part.getStocksList()),
-                OperationConverter.toDto(part.getOperationList()) // Assuming there's an OperationConverter
-        );
+        var dto = new PartDto();
+        dto.setUuid(part.getUuid());
+        dto.setNumber(part.getNumber());
+        dto.setName(part.getName());
+        dto.setProjectCode(part.getProjectCode());
+        dto.setCategory(part.getCategory());
+        dto.setStocksList(StockConverter.toDto(part.getStocksList()));
+        dto.setOperationList(OperationConverter.toDto(part.getOperationList()));
+        dto.setCreatedAt(part.getCreatedAt());
+        dto.setUpdatedAt(part.getUpdatedAt());
+        return dto;
+
     }
 
     public static Part toEntity(PartDto partDto) {

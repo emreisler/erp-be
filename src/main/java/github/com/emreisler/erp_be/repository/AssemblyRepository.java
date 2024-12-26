@@ -9,5 +9,7 @@ import java.util.Optional;
 public interface AssemblyRepository extends JpaRepository<Assembly, Long> {
     List<Assembly> findByProjectCode(String projectCode);
 
+    List<Assembly> findAllByOrderByUpdatedAtDesc();
+
     Optional<Assembly> findByNumber(String number);
 }

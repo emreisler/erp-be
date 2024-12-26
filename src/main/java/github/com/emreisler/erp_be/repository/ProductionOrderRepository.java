@@ -11,6 +11,8 @@ import java.util.Optional;
 public interface ProductionOrderRepository extends JpaRepository<ProductionOrder, Long> {
     List<ProductionOrder> findByPartNumber(String partNumber);
 
+    List<ProductionOrder> findAllByOrderByEndDateAsc();
+
     List<ProductionOrder> findByCurrentTaskCenter(int currentTaskCenter);
 
     Optional<ProductionOrder> findByCode(String code);

@@ -46,7 +46,7 @@ public class ProductionOrderServiceImpl implements ProductionOrderService {
     }
 
     public List<ProductionOrderDto> getAll() {
-        List<ProductionOrder> productionOrders = productionOrderRepository.findAll();
+        List<ProductionOrder> productionOrders = productionOrderRepository.findAllByOrderByEndDateAsc();
         return productionOrders.stream()
                 .map(ProductionOrderConverter::toDto)
                 .toList();

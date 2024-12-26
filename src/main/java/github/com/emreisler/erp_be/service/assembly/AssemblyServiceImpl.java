@@ -40,7 +40,7 @@ public class AssemblyServiceImpl implements AssemblyService {
 
     @Override
     public List<AssemblyDto> getAll() throws Exception {
-        return assemblyRepository.findAll().stream().map(AssemblyConverter::toDto).collect(Collectors.toList());
+        return assemblyRepository.findAllByOrderByUpdatedAtDesc().stream().map(AssemblyConverter::toDto).collect(Collectors.toList());
     }
 
     @Override

@@ -9,6 +9,7 @@ import java.util.Optional;
 public interface PartRepository extends JpaRepository<Part, Long> {
     List<Part> findByProjectCode(String projectCode);
 
+    List<Part> findAllByOrderByUpdatedAtDesc();
     Optional<Part> findByNumber(String number);
 
     Optional<Part> findByName(String name);
