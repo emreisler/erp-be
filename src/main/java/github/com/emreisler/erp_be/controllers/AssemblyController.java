@@ -1,6 +1,9 @@
 package github.com.emreisler.erp_be.controllers;
 
-import github.com.emreisler.erp_be.dto.*;
+import github.com.emreisler.erp_be.dto.AssemblyDto;
+import github.com.emreisler.erp_be.dto.AttachPartDto;
+import github.com.emreisler.erp_be.dto.AttachedStockDto;
+import github.com.emreisler.erp_be.dto.OperationDto;
 import github.com.emreisler.erp_be.service.assembly.AssemblyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +27,7 @@ public class AssemblyController {
     }
 
     @GetMapping("/part/{assemblyNo}")
-    public ResponseEntity<List<PartDto>> getParts(@PathVariable String assemblyNo) throws Exception {
+    public ResponseEntity<List<AttachPartDto>> getParts(@PathVariable String assemblyNo) throws Exception {
         return ResponseEntity.ok(assemblyService.getPartsByAssemblyNo(assemblyNo));
     }
 
@@ -35,7 +38,7 @@ public class AssemblyController {
     }
 
     @GetMapping("/stock/{assemblyNo}")
-    public ResponseEntity<List<StockDto>> getStocks(@PathVariable String assemblyNo) throws Exception {
+    public ResponseEntity<List<AttachedStockDto>> getStocks(@PathVariable String assemblyNo) throws Exception {
         return ResponseEntity.ok(assemblyService.getStocks(assemblyNo));
     }
 
@@ -45,12 +48,22 @@ public class AssemblyController {
     }
 
     @PutMapping("/stock/{assemblyNumber}")
-    public ResponseEntity<AssemblyDto> AttachOperation(@PathVariable String assemblyNumber, @RequestBody AttachStockRequest attachStockRequest) throws Exception {
-        return ResponseEntity.status(HttpStatus.CREATED).body(assemblyService.attachStock(assemblyNumber, attachStockRequest));
+    public ResponseEntity<AssemblyDto> attachStock(@PathVariable String assemblyNumber, @RequestBody AttachedStockDto attachedStockDto) throws Exception {
+        return ResponseEntity.status(HttpStatus.CREATED).body(assemblyService.attachStock(assemblyNumber, attachedStockDto));
+    }
+
+    @PutMapping("/part/{assemblyNumber}")
+    public ResponseEntity<AssemblyDto> attachPart(@PathVariable String assemblyNumber, @RequestBody AttachPartDto attachPartDto) throws Exception {
+        return ResponseEntity.status(HttpStatus.CREATED).body(assemblyService.attachPart(assemblyNumber, attachPartDto));
     }
 
     @PutMapping("/operation/{assemblyNumber}")
-    public ResponseEntity<AssemblyDto> AttachStock(@PathVariable String assemblyNumber, @RequestBody OperationDto operation) throws Exception {
+    public ResponseEntity<AssemblyDto> attachOperation(@PathVariable String assemblyNumber, @RequestBody OperationDto operation) throws Exception {
         return ResponseEntity.status(HttpStatus.CREATED).body(assemblyService.AttachOperation(assemblyNumber, operation));
+    }
+
+    @PutMapping("/operation")
+    public ResponseEntity<AssemblyDto> updateOperation(@PathVariable String assemblyNumber, @RequestBody OperationDto operationDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(assemblyService.updateOperation(assemblyNumber, operationDto));
     }
 }

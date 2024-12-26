@@ -1,17 +1,25 @@
 package github.com.emreisler.erp_be.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
 public class Operation {
 
     @Id
     @GeneratedValue
     private Long id;
+
+    @Column(nullable = false)
+    private UUID operationId;
 
     @ManyToOne
     @JoinColumn(name = "part_id")
@@ -22,7 +30,7 @@ public class Operation {
     private Assembly assembly;
 
     @Column(nullable = false)
-    private int sepNumber;
+    private int stepNumber;
 
     @Column(nullable = false)
     private String description;
@@ -38,76 +46,4 @@ public class Operation {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Part getPart() {
-        return part;
-    }
-
-    public void setPart(Part part) {
-        this.part = part;
-    }
-
-    public Assembly getAssembly() {
-        return assembly;
-    }
-
-    public void setAssembly(Assembly assembly) {
-        this.assembly = assembly;
-    }
-
-    public int getSepNumber() {
-        return sepNumber;
-    }
-
-    public void setSepNumber(int sepNumber) {
-        this.sepNumber = sepNumber;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public int getTaskCenterNo() {
-        return taskCenterNo;
-    }
-
-    public void setTaskCenterNo(int taskCenterNo) {
-        this.taskCenterNo = taskCenterNo;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 }

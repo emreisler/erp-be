@@ -13,7 +13,8 @@ public class AssemblyConverter {
         dto.setCreatedAt(assembly.getCreatedAt());
         dto.setUpdatedAt(assembly.getUpdatedAt());
         dto.setOperationList(OperationConverter.toDto(assembly.getOperationList()));
-        dto.setStockList(StockConverter.toDto(assembly.getStockList()));
+        dto.setAttachedStocks(AttachStockConverter.toDto(assembly.getAttachedStocks()));
+        dto.setAttachParts(AttachedPartConverter.toDto(assembly.getAttachedParts()));
         return dto;
     }
 
@@ -26,7 +27,9 @@ public class AssemblyConverter {
         assembly.setCreatedAt(dto.getCreatedAt());
         assembly.setUpdatedAt(dto.getUpdatedAt());
         assembly.setOperationList(OperationConverter.toEntity(dto.getOperationList()));
-        assembly.setStockList(StockConverter.toEntity(dto.getStockList()));
+        assembly.setAttachedStocks(AttachStockConverter.toEntity(dto.getAttachedStocks()));
+        assembly.setAttachedParts(AttachedPartConverter.toEntity(dto.getAttachParts()));
         return assembly;
     }
+
 }

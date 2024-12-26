@@ -3,7 +3,7 @@ package github.com.emreisler.erp_be.service.part;
 import github.com.emreisler.erp_be.converters.OperationConverter;
 import github.com.emreisler.erp_be.converters.PartConverter;
 import github.com.emreisler.erp_be.converters.StockConverter;
-import github.com.emreisler.erp_be.dto.AttachStockRequest;
+import github.com.emreisler.erp_be.dto.AttachedStockDto;
 import github.com.emreisler.erp_be.dto.OperationDto;
 import github.com.emreisler.erp_be.dto.PartDto;
 import github.com.emreisler.erp_be.dto.StockDto;
@@ -107,13 +107,15 @@ public class PartServiceImpl implements PartService {
     @Override
     public PartDto AttachOperation(String partNumber, OperationDto operation) throws Exception {
 
+        operation.setOperationId(UUID.randomUUID());
+
         // todo check task center exist
         if (!taskCenterRepository.existsByNumber(operation.getTaskCenterNo())) {
             throw new BadRequestException(String.format("TaskCenter number %s not found", operation.getTaskCenterNo()));
         }
 
-        if (operation.getSepNumber() <= 0) {
-            throw new BadRequestException(String.format("Part operation number must be greater than zero", operation.getSepNumber()));
+        if (operation.getStepNumber() <= 0) {
+            throw new BadRequestException(String.format("Part operation number must be greater than zero", operation.getStepNumber()));
         }
 
         var part = partRepository.findByNumber(partNumber).orElseThrow(() -> new NotFoundException(String.format("Part with number %s not found", partNumber)));
@@ -121,11 +123,11 @@ public class PartServiceImpl implements PartService {
         Set<Integer> stepNumbers = new HashSet<>();
 
         for (Operation partOperation : part.getOperationList()) {
-            stepNumbers.add(partOperation.getSepNumber());
+            stepNumbers.add(partOperation.getStepNumber());
         }
 
-        if (stepNumbers.contains(operation.getSepNumber())) {
-            throw new BadRequestException(String.format("Part operation number %s already exists", operation.getSepNumber()));
+        if (stepNumbers.contains(operation.getStepNumber())) {
+            throw new BadRequestException(String.format("Part operation number %s already exists", operation.getStepNumber()));
         }
 
         var operationEntity = OperationConverter.toEntity(operation);
@@ -140,8 +142,8 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
-    public PartDto attachStock(String partNumber, AttachStockRequest attachStockRequest) throws Exception {
-        var stock = stockRepository.findByCode(attachStockRequest.getCode()).orElseThrow(() -> new NotFoundException(String.format("Stock with code %s not found", attachStockRequest.getCode())));
+    public PartDto attachStock(String partNumber, AttachedStockDto attachedStockDto) throws Exception {
+        var stock = stockRepository.findByCode(attachedStockDto.getCode()).orElseThrow(() -> new NotFoundException(String.format("Stock with code %s not found", attachedStockDto.getCode())));
 
         var part = partRepository.findByNumber(partNumber).orElseThrow(() -> new NotFoundException(String.format("Part with number %s not found", partNumber)));
 
@@ -168,13 +170,13 @@ public class PartServiceImpl implements PartService {
         }
 
         Set<Integer> stepNumbers = part.getOperationList().stream()
-                .map(Operation::getSepNumber)
+                .map(Operation::getStepNumber)
                 .collect(Collectors.toSet());
         if (!stepNumbers.contains(stepNumber)) {
             throw new BadRequestException(String.format("Part operation number %s does not exist", stepNumber));
         }
 
-        operationRepository.deleteByPartIdAndSepNumber(part.getId(), stepNumber);
+        operationRepository.deleteByPartIdAndStepNumber(part.getId(), stepNumber);
 
         return partRepository.findByNumber(partNumber).map(PartConverter::toDto).orElse(null);
     }

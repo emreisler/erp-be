@@ -1,6 +1,6 @@
 package github.com.emreisler.erp_be.service.part;
 
-import github.com.emreisler.erp_be.dto.AttachStockRequest;
+import github.com.emreisler.erp_be.dto.AttachedStockDto;
 import github.com.emreisler.erp_be.dto.OperationDto;
 import github.com.emreisler.erp_be.dto.PartDto;
 import github.com.emreisler.erp_be.dto.StockDto;
@@ -25,7 +25,7 @@ public interface PartService {
 
     PartDto AttachOperation(String partNumber, OperationDto operation) throws Exception;
 
-    PartDto attachStock(String partNumber, AttachStockRequest attachStockRequest) throws Exception;
+    PartDto attachStock(String partNumber, AttachedStockDto attachedStockDto) throws Exception;
 
     PartDto DeleteOperation(String partNumber, int stepNumber) throws Exception;
 

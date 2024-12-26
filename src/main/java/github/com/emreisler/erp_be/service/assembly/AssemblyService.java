@@ -22,7 +22,9 @@ public interface AssemblyService {
 
     AssemblyDto RemovePart(String assemblyNo, PartDto partDto) throws Exception;
 
-    List<PartDto> getPartsByAssemblyNo(String assemblyNo) throws Exception;
+    AssemblyDto attachPart(String assemblyNo, AttachPartDto attachPartDto) throws Exception;
+
+    List<AttachPartDto> getPartsByAssemblyNo(String assemblyNo) throws Exception;
 
     AssemblyDto AttachOperation(String assemblyNo, OperationDto operationDto) throws Exception;
 
@@ -30,11 +32,13 @@ public interface AssemblyService {
 
     List<OperationDto> getOperations(String assemblyNo) throws Exception;
 
-    AssemblyDto attachStock(String assemblyNo, AttachStockRequest attachStockRequest) throws Exception;
+    AssemblyDto attachStock(String assemblyNo, AttachedStockDto attachedStockDto) throws Exception;
 
-    List<StockDto> getStocks(String assemblyNo) throws Exception;
+    List<AttachedStockDto> getStocks(String assemblyNo) throws Exception;
 
     AssemblyDto GetOperations(String assemblyNo) throws Exception;
 
     AssemblyDto AttachMaterial(String assemblyNo, String materialNo) throws Exception;
+
+    AssemblyDto updateOperation(String assemblyNumber, OperationDto operationDto);
 }

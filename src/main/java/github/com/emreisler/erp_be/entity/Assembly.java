@@ -30,14 +30,14 @@ public class Assembly {
     @Column(nullable = false)
     private String projectCode;
 
-    @ManyToMany
-    private List<Part> partList;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<AttachedPart> attachedParts;
 
     @OneToMany(mappedBy = "assembly", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Operation> operationList;
 
-    @ManyToMany
-    private List<Stock> stockList;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<AttachedStock> attachedStocks;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

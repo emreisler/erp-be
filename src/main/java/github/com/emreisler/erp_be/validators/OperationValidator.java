@@ -13,8 +13,8 @@ public class OperationValidator implements Validator<OperationDto> {
             throw new BadRequestException("Operation object is null");
         }
 
-        if (object.getSepNumber() <= 0) {
-            throw new BadRequestException(String.format("Part operation number must be greater than zero", object.getSepNumber()));
+        if (object.getStepNumber() <= 0) {
+            throw new BadRequestException(String.format("Part operation number must be greater than zero", object.getStepNumber()));
         }
     }
 }

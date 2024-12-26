@@ -14,10 +14,11 @@ public class OperationConverter {
         }
 
         var operationDto = new OperationDto();
-        operationDto.setSepNumber(operation.getSepNumber());
+        operationDto.setStepNumber(operation.getStepNumber());
         operationDto.setDescription(operation.getDescription());
         operationDto.setImageUrl(operation.getImageUrl());
         operationDto.setTaskCenterNo(operation.getTaskCenterNo());
+        operationDto.setOperationId(operation.getOperationId());
         if (operation.getPart() != null) {
             operationDto.setPartNumber(operation.getPart().getNumber());
         }
@@ -34,7 +35,8 @@ public class OperationConverter {
         }
 
         Operation operation = new Operation();
-        operation.setSepNumber(operationDto.getSepNumber());
+        operation.setOperationId(operationDto.getOperationId());
+        operation.setStepNumber(operationDto.getStepNumber());
         operation.setDescription(operationDto.getDescription());
         operation.setImageUrl(operationDto.getImageUrl());
         operation.setTaskCenterNo(operationDto.getTaskCenterNo());

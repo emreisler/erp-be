@@ -1,6 +1,6 @@
 package github.com.emreisler.erp_be.controllers;
 
-import github.com.emreisler.erp_be.dto.AttachStockRequest;
+import github.com.emreisler.erp_be.dto.AttachedStockDto;
 import github.com.emreisler.erp_be.dto.OperationDto;
 import github.com.emreisler.erp_be.dto.PartDto;
 import github.com.emreisler.erp_be.dto.StockDto;
@@ -57,8 +57,8 @@ public class PartController {
     }
 
     @PutMapping("/stock/{partNumber}")
-    public ResponseEntity<PartDto> addStock(@PathVariable String partNumber, @RequestBody AttachStockRequest attachStockRequest) throws Exception {
-        return ResponseEntity.status(HttpStatus.CREATED).body(partService.attachStock(partNumber, attachStockRequest));
+    public ResponseEntity<PartDto> addStock(@PathVariable String partNumber, @RequestBody AttachedStockDto attachedStockDto) throws Exception {
+        return ResponseEntity.status(HttpStatus.CREATED).body(partService.attachStock(partNumber, attachedStockDto));
     }
 
     @DeleteMapping("/operation/{partNumber}")

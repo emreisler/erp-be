@@ -1,70 +1,25 @@
 package github.com.emreisler.erp_be.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.UUID;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class OperationDto {
 
+    private UUID operationId;
     private String partNumber;
     private String assemblyNumber;
-    private int sepNumber;
+    private int stepNumber;
     private String description;
     private String imageUrl;
     private int taskCenterNo;
 
-    public OperationDto(String partNumber, int sepNumber, String description, String imageUrl, int taskCenterNo) {
-        this.partNumber = partNumber;
-        this.sepNumber = sepNumber;
-        this.description = description;
-        this.imageUrl = imageUrl;
-        this.taskCenterNo = taskCenterNo;
-    }
 
-    public OperationDto() {
-    }
-
-    public String getPartNumber() {
-        return partNumber;
-    }
-
-    public void setPartNumber(String partNumber) {
-        this.partNumber = partNumber;
-    }
-
-    public int getSepNumber() {
-        return sepNumber;
-    }
-
-    public void setSepNumber(int sepNumber) {
-        this.sepNumber = sepNumber;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public int getTaskCenterNo() {
-        return taskCenterNo;
-    }
-
-    public void setTaskCenterNo(int taskCenterNo) {
-        this.taskCenterNo = taskCenterNo;
-    }
-
-    public String getAssemblyNumber() {
-        return assemblyNumber;
-    }
-
-    public void setAssemblyNumber(String assemblyNumber) {
-        this.assemblyNumber = assemblyNumber;
-    }
 }

@@ -106,10 +106,10 @@ public class ProductionOrderServiceImpl implements ProductionOrderService {
             throw new NotFoundException("No operations found for partNo: " + request.getPartNo());
         }
 
-        var sortedOperations = part.getOperationList().stream().sorted(Comparator.comparingInt(Operation::getSepNumber)).toList();
+        var sortedOperations = part.getOperationList().stream().sorted(Comparator.comparingInt(Operation::getStepNumber)).toList();
         var firstOperation = sortedOperations.get(0);
 
-        int currentStep = firstOperation.getSepNumber();
+        int currentStep = firstOperation.getStepNumber();
         int currentTaskCenter = firstOperation.getTaskCenterNo();
 
         // Create and populate ProductionOrder entity
@@ -155,21 +155,21 @@ public class ProductionOrderServiceImpl implements ProductionOrderService {
 
         var sortedOperations = part.getOperationList()
                 .stream()
-                .sorted(Comparator.comparingInt(OperationDto::getSepNumber))
+                .sorted(Comparator.comparingInt(OperationDto::getStepNumber))
                 .toList();
 
         int previousStep = 0;
         var stepExist = false;
         var taskCenterNo = 0;
         for (var operation : sortedOperations) {
-            if (stampDto.getStepNumber() == operation.getSepNumber()) {
+            if (stampDto.getStepNumber() == operation.getStepNumber()) {
                 stepExist = true;
                 taskCenterNo = operation.getTaskCenterNo();
             }
             if (stepExist) {
                 break;
             }
-            previousStep = operation.getSepNumber();
+            previousStep = operation.getStepNumber();
         }
 
         if (!stepExist) {
@@ -183,7 +183,7 @@ public class ProductionOrderServiceImpl implements ProductionOrderService {
             throw new BadRequestException("previous step is not stamped");
         }
 
-        if (sortedOperations.get(sortedOperations.size() - 1).getSepNumber() == stampDto.getStepNumber()) {
+        if (sortedOperations.get(sortedOperations.size() - 1).getStepNumber() == stampDto.getStepNumber()) {
             prodOrder.setStatus(ProductionOrderStatus.COMPLETED);
         } else {
             prodOrder.setStatus(ProductionOrderStatus.IN_PROGRESS);
