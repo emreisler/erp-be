@@ -1,7 +1,7 @@
 package github.com.emreisler.erp_be.converters;
 
-import github.com.emreisler.erp_be.dto.AssemblyDto;
-import github.com.emreisler.erp_be.entity.Assembly;
+import github.com.emreisler.erp_be.application.dto.AssemblyDto;
+import github.com.emreisler.erp_be.persistence.entity.Assembly;
 
 public class AssemblyConverter {
     public static AssemblyDto toDto(Assembly assembly) {

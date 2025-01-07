@@ -1,8 +1,8 @@
 package github.com.emreisler.erp_be.converters;
 
 
-import github.com.emreisler.erp_be.dto.AttachedStockDto;
-import github.com.emreisler.erp_be.entity.AttachedStock;
+import github.com.emreisler.erp_be.application.dto.AttachedStockDto;
+import github.com.emreisler.erp_be.persistence.entity.AttachedStock;
 
 import java.util.ArrayList;
 import java.util.List;

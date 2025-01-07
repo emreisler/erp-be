@@ -1,8 +1,8 @@
 package github.com.emreisler.erp_be.converters;
 
 
-import github.com.emreisler.erp_be.dto.AttachPartDto;
-import github.com.emreisler.erp_be.entity.AttachedPart;
+import github.com.emreisler.erp_be.application.dto.AttachPartDto;
+import github.com.emreisler.erp_be.persistence.entity.AttachedPart;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,7 @@
 package github.com.emreisler.erp_be.converters;
 
-import github.com.emreisler.erp_be.dto.PartDto;
-import github.com.emreisler.erp_be.entity.Part;
+import github.com.emreisler.erp_be.application.dto.PartDto;
+import github.com.emreisler.erp_be.persistence.entity.Part;
 
 import java.util.List;
 import java.util.stream.Collectors;

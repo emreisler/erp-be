@@ -1,8 +1,8 @@
 package github.com.emreisler.erp_be.configuration;
 
-import github.com.emreisler.erp_be.entity.Category;
-import github.com.emreisler.erp_be.enums.CategoryType;
-import github.com.emreisler.erp_be.repository.CategoryRepository;
+import github.com.emreisler.erp_be.domain.enums.CategoryType;
+import github.com.emreisler.erp_be.persistence.entity.Category;
+import github.com.emreisler.erp_be.persistence.repository.CategoryRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

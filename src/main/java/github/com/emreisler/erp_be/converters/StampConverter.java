@@ -1,7 +1,7 @@
 package github.com.emreisler.erp_be.converters;
 
-import github.com.emreisler.erp_be.dto.StampDto;
-import github.com.emreisler.erp_be.entity.Stamp;
+import github.com.emreisler.erp_be.application.dto.StampDto;
+import github.com.emreisler.erp_be.persistence.entity.Stamp;
 
 import java.time.LocalDateTime;
 

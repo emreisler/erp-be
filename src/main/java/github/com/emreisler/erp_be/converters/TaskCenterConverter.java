@@ -1,7 +1,7 @@
 package github.com.emreisler.erp_be.converters;
 
-import github.com.emreisler.erp_be.dto.TaskCenterDto;
-import github.com.emreisler.erp_be.entity.TaskCenter;
+import github.com.emreisler.erp_be.application.dto.TaskCenterDto;
+import github.com.emreisler.erp_be.persistence.entity.TaskCenter;
 
 import java.util.ArrayList;
 import java.util.List;

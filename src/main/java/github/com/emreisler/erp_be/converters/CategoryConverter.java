@@ -1,7 +1,7 @@
 package github.com.emreisler.erp_be.converters;
 
-import github.com.emreisler.erp_be.dto.CategoryDto;
-import github.com.emreisler.erp_be.entity.Category;
+import github.com.emreisler.erp_be.application.dto.CategoryDto;
+import github.com.emreisler.erp_be.persistence.entity.Category;
 
 public class CategoryConverter {
 
