@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum Unit {
     PCS,
     BOX,
-    LITERS;
+    LITERS,
+    KG;
 
     @JsonCreator
     public static Unit fromValue(String value) {

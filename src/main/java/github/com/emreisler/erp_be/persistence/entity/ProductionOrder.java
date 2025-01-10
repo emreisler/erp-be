@@ -45,7 +45,6 @@ public class ProductionOrder {
     @Positive
     private int totalSteps;
 
-    @Positive
     private int currentTaskCenter;
 
     @Column(nullable = false)

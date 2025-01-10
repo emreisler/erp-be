@@ -51,7 +51,7 @@ public class Stock {
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
-    @NotNull
+    @Enumerated(EnumType.STRING)
     private Unit unit;
 
     @NotNull

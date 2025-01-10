@@ -132,8 +132,8 @@ public class ProductionOrderServiceImpl implements ProductionOrderService {
     }
 
     @Override
+    @Transactional
     public ProductionOrderDto createAssemblyProductionOrder(CreateAssemblyProductionOrderRequest request) {
-
 
         // Generate UUID and Code
         UUID orderId = UUID.randomUUID();
@@ -200,14 +200,14 @@ public class ProductionOrderServiceImpl implements ProductionOrderService {
 
         int previousStep = 0;
         var stepExist = false;
-        var taskCenterNo = 0;
+        var currentTcNo = 0;
         for (var operation : sortedOperations) {
+            if (stepExist) {
+                currentTcNo = operation.getTaskCenterNo();
+                break;
+            }
             if (stampDto.getStepNumber() == operation.getStepNumber()) {
                 stepExist = true;
-                taskCenterNo = operation.getTaskCenterNo();
-            }
-            if (stepExist) {
-                break;
             }
             previousStep = operation.getStepNumber();
         }
@@ -217,11 +217,11 @@ public class ProductionOrderServiceImpl implements ProductionOrderService {
         }
 
         prodOrder.setCurrentStep(stampDto.getStepNumber());
-        prodOrder.setCurrentTaskCenter(taskCenterNo);
-
-        if (previousStep != 0 && !this.isStamped(prodOrder, previousStep)) {
-            throw new BadRequestException("previous step is not stamped");
-        }
+        prodOrder.setCurrentTaskCenter(currentTcNo);
+//
+//        if (previousStep != 0 && !this.isStamped(prodOrder, previousStep)) {
+//            throw new BadRequestException("previous step is not stamped");
+//        }
 
         if (sortedOperations.get(sortedOperations.size() - 1).getStepNumber() == stampDto.getStepNumber()) {
             prodOrder.setStatus(ProductionOrderStatus.COMPLETED);
