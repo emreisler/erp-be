@@ -1,27 +1,37 @@
-# Stage 1: Build
-FROM openjdk:17-jdk-slim AS builder
+# Stage 1: Build the application
+FROM eclipse-temurin:23-jdk-alpine AS builder
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Copy Maven project files
-COPY pom.xml ./
+COPY mvnw ./mvnw
+
+COPY mvnw.cmd ./mvnw.cmd
+
+COPY pom.xml ./pom.xml
+
+# Download dependencies
+RUN ./mvnw dependency:resolve
+
+# Copy the rest of the application source code
 COPY src ./src
 
-# Package the application
-RUN mvn clean package -DskipTests
 
-# Stage 2: Runtime
-FROM openjdk:23-jre-slim
 
-# Set working directory
+# Build the application
+RUN ./mvnw clean package -DskipTests
+
+# Stage 2: Create the runtime image
+FROM eclipse-temurin:23-jre-alpine
+
+# Set the working directory
 WORKDIR /app
 
-# Copy the jar file from the build stage
+# Copy the built JAR file from the builder stage
 COPY --from=builder /app/target/*.jar app.jar
 
-# Expose the port your app runs on
+# Expose the port your Spring Boot app listens on (default: 8080)
 EXPOSE 8080
 
-# Set the entry point to run the jar
+# Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]

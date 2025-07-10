@@ -1,9 +1,6 @@
 package github.com.emreisler.erp_be.application.controllers;
 
-import github.com.emreisler.erp_be.application.dto.CreateAssemblyProductionOrderRequest;
-import github.com.emreisler.erp_be.application.dto.CreatePartProductionOrderRequest;
-import github.com.emreisler.erp_be.application.dto.ProductionOrderDto;
-import github.com.emreisler.erp_be.application.dto.StampDto;
+import github.com.emreisler.erp_be.application.dto.*;
 import github.com.emreisler.erp_be.domain.service.productionOrder.ProductionOrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +55,11 @@ public class ProductionOrderController {
     @PutMapping("/stamp")
     public ResponseEntity<ProductionOrderDto> stamp(@RequestBody StampDto stampDto) throws Exception {
         return ResponseEntity.ok(productionOrderService.stamp(stampDto));
+    }
+
+    @GetMapping("/task-center-metrics")
+    public ResponseEntity<List<TaskCenterPartCount>> getTaskCenterMetrics() throws Exception {
+        return ResponseEntity.ok(productionOrderService.getTaskCenterMetrics());
     }
 
 

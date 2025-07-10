@@ -1,9 +1,6 @@
 package github.com.emreisler.erp_be.domain.service.productionOrder;
 
-import github.com.emreisler.erp_be.application.dto.CreateAssemblyProductionOrderRequest;
-import github.com.emreisler.erp_be.application.dto.CreatePartProductionOrderRequest;
-import github.com.emreisler.erp_be.application.dto.ProductionOrderDto;
-import github.com.emreisler.erp_be.application.dto.StampDto;
+import github.com.emreisler.erp_be.application.dto.*;
 import github.com.emreisler.erp_be.domain.exception.ErpRuntimeException;
 
 import java.util.List;
@@ -28,4 +25,8 @@ public interface ProductionOrderService {
     ProductionOrderDto removeStamp(String poCode, int stepNumber) throws Exception;
 
     List<StampDto> getStampsByCode(String code) throws Exception;
+
+    List<TaskCenterPartCount> getTaskCenterMetrics() throws Exception;
+
+    List<TaskCenterDto> getIdleTaskCenters() throws Exception;
 }

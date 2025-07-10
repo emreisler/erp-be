@@ -8,6 +8,7 @@ import github.com.emreisler.erp_be.domain.exception.BadRequestException;
 import github.com.emreisler.erp_be.domain.exception.ErpRuntimeException;
 import github.com.emreisler.erp_be.domain.exception.NotFoundException;
 import github.com.emreisler.erp_be.domain.service.part.PartService;
+import github.com.emreisler.erp_be.domain.service.taskCenter.TaskCenterService;
 import github.com.emreisler.erp_be.domain.validators.Validator;
 import github.com.emreisler.erp_be.persistence.entity.*;
 import github.com.emreisler.erp_be.persistence.repository.AssemblyRepository;
@@ -17,15 +18,14 @@ import github.com.emreisler.erp_be.persistence.repository.StampRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class ProductionOrderServiceImpl implements ProductionOrderService {
 
     private final PartService partService;
+    private final TaskCenterService taskCenterService;
     private final ProductionOrderRepository productionOrderRepository;
     private final PartRepository partRepository;
     private final AssemblyRepository assemblyRepository;
@@ -33,8 +33,9 @@ public class ProductionOrderServiceImpl implements ProductionOrderService {
     private final Validator<CreatePartProductionOrderRequest> validator;
 
 
-    public ProductionOrderServiceImpl(PartService partService, ProductionOrderRepository productionOrderRepository, PartRepository partRepository, AssemblyRepository assemblyRepository, StampRepository stampRepository, Validator<CreatePartProductionOrderRequest> validator) {
+    public ProductionOrderServiceImpl(PartService partService, TaskCenterService taskCenterService, ProductionOrderRepository productionOrderRepository, PartRepository partRepository, AssemblyRepository assemblyRepository, StampRepository stampRepository, Validator<CreatePartProductionOrderRequest> validator) {
         this.partService = partService;
+        this.taskCenterService = taskCenterService;
         this.productionOrderRepository = productionOrderRepository;
         this.partRepository = partRepository;
         this.assemblyRepository = assemblyRepository;
@@ -254,6 +255,59 @@ public class ProductionOrderServiceImpl implements ProductionOrderService {
     @Override
     public List<StampDto> getStampsByCode(String code) throws Exception {
         return stampRepository.findByProductionOrderCode(code).stream().map(StampConverter::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TaskCenterPartCount> getTaskCenterMetrics() throws Exception {
+        var prodOrders = productionOrderRepository.findAll();
+        var taskCenters = taskCenterService.GetAll();
+
+        if (prodOrders.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        Map<Integer, TaskCenterPartCount> taskCenterPartCountMap = new HashMap<>();
+
+        for (var tc : taskCenters) {
+            taskCenterPartCountMap.put(tc.getNumber(), new TaskCenterPartCount(tc));
+        }
+
+        for (var prodOrder : prodOrders) {
+            if (prodOrder.getPartNumber() == null || prodOrder.getPartNumber().isEmpty() || prodOrder.getCurrentTaskCenter() == 0) {
+                continue;
+            }
+
+            var partDto = partService.GetByNumber(prodOrder.getPartNumber());
+
+            taskCenterPartCountMap.get(prodOrder.getCurrentTaskCenter()).addPart(partDto);
+            taskCenterPartCountMap.get(prodOrder.getCurrentTaskCenter()).increaseQuantity(prodOrder.getQuantity());
+
+        }
+
+
+        return new ArrayList<>(taskCenterPartCountMap.values());
+    }
+
+    @Override
+    public List<TaskCenterDto> getIdleTaskCenters() throws Exception {
+        var taskCenters = taskCenterService.GetAll();
+        var prodOrders = productionOrderRepository.findAll();
+
+        Set<Integer> busyTaskCenters = new HashSet<>();
+
+        for (var prodOrder : prodOrders) {
+            busyTaskCenters.add(prodOrder.getCurrentTaskCenter());
+        }
+
+        List<TaskCenterDto> idleTaskCenters = new ArrayList<>();
+        for (var taskCenter : taskCenters) {
+            if (!busyTaskCenters.contains(taskCenter.getNumber())) {
+                idleTaskCenters.add(taskCenter);
+            }
+        }
+
+        return idleTaskCenters;
+
     }
 
     private boolean isStamped(ProductionOrder productionOrder, int stepNumber) {
