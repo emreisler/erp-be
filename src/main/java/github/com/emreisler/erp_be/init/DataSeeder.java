@@ -22,7 +22,7 @@ public class DataSeeder implements CommandLineRunner {
         if (userRepository.findByEmail("admin@example.com").isEmpty()) {
             User admin = new User();
             admin.setName("Admin");
-            admin.setEmail("admin@example.com");
+            admin.setEmail("admin@erplite.com");
             admin.setPassword(passwordEncoder.encode("admin123")); // Secure password
             admin.setAdmin(true);
             userRepository.save(admin);
