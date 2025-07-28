@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres
+    container_name: erp-postgres
+    environment:
+      POSTGRES_DB: erp
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    image: emreisler/erp-be:latest
+    container_name: erp-be
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/erp
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+
+
+volumes:
+  postgres_data:

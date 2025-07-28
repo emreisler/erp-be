@@ -6,6 +6,7 @@ import github.com.emreisler.erp_be.application.dto.PartDto;
 import github.com.emreisler.erp_be.application.dto.StockDto;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface PartService {
 
@@ -30,4 +31,6 @@ public interface PartService {
     PartDto DeleteOperation(String partNumber, int stepNumber) throws Exception;
 
     void Delete(String partNumber) throws Exception;
+
+    void updateOperation(UUID opID, OperationDto operation) throws Exception;
 }

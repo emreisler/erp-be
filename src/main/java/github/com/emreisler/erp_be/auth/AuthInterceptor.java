@@ -1,28 +1,46 @@
 package github.com.emreisler.erp_be.auth;
 
+import github.com.emreisler.erp_be.domain.service.auth.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
 
-    private static final String AUTH_SERVICE_VALIDATE_URL = "http://localhost:8081/v1/auth/validate";
+    private AuthService authService;
 
-    private final RestTemplate restTemplate;
+    // Define whitelisted paths (can also use regex or Ant patterns)
+    private static final String[] WHITELIST = {
+            "/v1/auth/login",
+            "/v1/auth/register",
+            "/actuator/health"
+    };
 
-    public AuthInterceptor(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    private boolean isWhitelisted(String path) {
+        for (String allowed : WHITELIST) {
+            if (path.startsWith(allowed)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public AuthInterceptor(AuthService authService) {
+        this.authService = authService;
     }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        String path = request.getRequestURI();
+
+        if (isWhitelisted(path)) {
+            return true;
+        }
+
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -33,19 +51,11 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         String token = authHeader.replace("Bearer ", "");
 
-        // Validate token with auth service
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set(HttpHeaders.AUTHORIZATION, token);
-
-            HttpEntity<String> entity = new HttpEntity<>("body", headers);
-
-            restTemplate.exchange(AUTH_SERVICE_VALIDATE_URL, HttpMethod.GET, entity, String.class);
-            return true; // Token is valid, continue to the handler
-        } catch (Exception e) {
+        if (!this.authService.validateToken(token)) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.getWriter().write("Invalid or expired token");
             return false;
         }
+        return true;
     }
 }

@@ -142,6 +142,18 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
+    public void updateOperation(UUID opID, OperationDto operation) throws Exception {
+        var existingOp = operationRepository.findByOperationId(opID).orElseThrow(() -> new NotFoundException("Operation not found"));
+
+        existingOp.setDescription(operation.getDescription());
+        existingOp.setStepNumber(operation.getStepNumber());
+        existingOp.setImageUrl(operation.getImageUrl());
+        existingOp.setTaskCenterNo(operation.getTaskCenterNo());
+
+        operationRepository.save(existingOp);
+    }
+
+    @Override
     public PartDto attachStock(String partNumber, AttachedStockDto attachedStockDto) throws Exception {
         var stock = stockRepository.findByCode(attachedStockDto.getCode()).orElseThrow(() -> new NotFoundException(String.format("Stock with code %s not found", attachedStockDto.getCode())));
 
@@ -185,5 +197,6 @@ public class PartServiceImpl implements PartService {
     public void Delete(String partNumber) throws Exception {
         partRepository.deleteByNumber(partNumber);
     }
+
 
 }

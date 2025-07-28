@@ -10,9 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/part")
+@CrossOrigin(origins = "*")
 public class PartController {
 
     private final PartService partService;
@@ -54,6 +56,12 @@ public class PartController {
     @PutMapping("/operation/{partNumber}")
     public ResponseEntity<PartDto> AttachOperation(@PathVariable String partNumber, @RequestBody OperationDto operation) throws Exception {
         return ResponseEntity.status(HttpStatus.CREATED).body(partService.AttachOperation(partNumber, operation));
+    }
+
+    @PutMapping("/operation/{opID}:update")
+    public ResponseEntity<String> UpdateOperation(@PathVariable UUID opID, @RequestBody OperationDto operation) throws Exception {
+        partService.updateOperation(opID, operation);
+        return ResponseEntity.ok("operation updated");
     }
 
     @PutMapping("/stock/{partNumber}")
